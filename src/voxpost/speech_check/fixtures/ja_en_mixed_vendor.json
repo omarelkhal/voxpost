@@ -1,0 +1,31 @@
+{
+  "case_id": "ja_en_mixed_vendor",
+  "label": "Mixed JP/EN — vendor shipment delay",
+  "intent": "Tokyo supplier says shipment delayed; new ETA June 5.",
+  "must_mention_any": [
+    "7781",
+    "delay",
+    "june",
+    "ship",
+    "customs",
+    "eta",
+    "po"
+  ],
+  "must_not_mention": [
+    "50% off everything",
+    "github pr"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "ja-mixed",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Tanaka Trading <export@tanaka-trading.co.jp>",
+    "subject": "Re: PO-7781 — shipment delay / 出荷遅延",
+    "body": "Omar-san, 申し訳ございません。PO-7781 will ship late due to customs. New ETA: June 5. We will absorb express fees. Please confirm receipt of this update.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

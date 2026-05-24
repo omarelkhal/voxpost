@@ -1,0 +1,36 @@
+{
+  "case_id": "en_rent_increase",
+  "label": "English — landlord rent increase letter",
+  "intent": "Rent rises 8% from July 1; new lease rider attached.",
+  "must_mention_any": [
+    "rent",
+    "8",
+    "july",
+    "lease",
+    "increase",
+    "728",
+    "rider"
+  ],
+  "must_not_mention": [
+    "staging deploy",
+    "package delivery"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-rent",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Oak Street Properties <leasing@oakstreet.example>",
+    "subject": "Notice: rent adjustment effective July 1",
+    "body": "Dear tenant, per your lease section 14, monthly rent will increase by 8% effective July 1. The new amount is $1,728. A signed rider is attached; return within 14 days.",
+    "has_attachments": true,
+    "attachment_count": 1,
+    "attachments": [
+      {
+        "filename": "lease-rider-2026.pdf",
+        "mime_type": "application/pdf"
+      }
+    ]
+  }
+}

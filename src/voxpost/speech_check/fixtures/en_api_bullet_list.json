@@ -1,0 +1,32 @@
+{
+  "case_id": "en_api_bullet_list",
+  "label": "English — three numbered API questions",
+  "intent": "Client asks three distinct API migration questions.",
+  "must_mention_any": [
+    "webhook",
+    "rate",
+    "export",
+    "sandbox",
+    "api",
+    "tuesday",
+    "board",
+    "question"
+  ],
+  "must_not_mention": [
+    "50% off",
+    "steuer"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-bullets",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Priya Nair <priya@clientcorp.com>",
+    "subject": "API migration — three blockers",
+    "body": "Hi team,\n1) Will v2 webhooks stay supported through Q3?\n2) What's the rate limit on bulk export?\n3) Do sandbox keys rotate automatically?\nNeed answers before our board meeting Tuesday.\n— Priya",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

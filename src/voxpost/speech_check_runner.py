@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -156,6 +157,31 @@ def run_model_review(
         case_count=len(cases),
     )
     return run_in_process_pool(cases, effective, _worker_model_review, job)
+
+
+def run_model_review_sequential(
+    *,
+    config_dir: Path | None = None,
+    local_files_only: bool = False,
+    model: str | None = None,
+    case_ids: tuple[str, ...] | None = None,
+    on_case_complete: Callable[[int, int, ModelReviewResult], None] | None = None,
+) -> list[ModelReviewResult]:
+    """Run fixtures one at a time in-process (for incremental report + early stop)."""
+    cases = filter_speech_cases(case_ids)
+    summarizer = EmailSummarizer(
+        model=model,
+        config_dir=config_dir,
+        local_files_only=local_files_only,
+    )
+    results: list[ModelReviewResult] = []
+    total = len(cases)
+    for index, case in enumerate(cases, start=1):
+        result = review_case(summarizer, case)
+        results.append(result)
+        if on_case_complete is not None:
+            on_case_complete(index, total, result)
+    return results
 
 
 def _worker_model_review(

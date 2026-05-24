@@ -1,0 +1,31 @@
+{
+  "case_id": "it_dinner_invite",
+  "label": "Italian — informal dinner invitation",
+  "intent": "Invite to dinner Saturday 8pm at Trattoria da Luca.",
+  "must_mention_any": [
+    "cena",
+    "dinner",
+    "sabato",
+    "saturday",
+    "20",
+    "luca",
+    "vegetar"
+  ],
+  "must_not_mention": [
+    "steuerbescheid",
+    "deploy failed"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "it-dinner",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Giulia Rossi <giulia.rossi@gmail.com>",
+    "subject": "Cena sabato?",
+    "body": "Ciao Omar! Sabato sera ci vediamo da Luca alle 20:00? Prenoto per 6 persone. Fammi sapere se vegetariano per te.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

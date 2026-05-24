@@ -1,0 +1,31 @@
+{
+  "case_id": "en_github_pr",
+  "label": "English — GitHub pull request review",
+  "intent": "Review requested on PR #882 auth refactor before release.",
+  "must_mention_any": [
+    "review",
+    "882",
+    "pull",
+    "auth",
+    "release",
+    "friday",
+    "refactor"
+  ],
+  "must_not_mention": [
+    "reset your password",
+    "invoice due"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-github",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "GitHub <notifications@github.com>",
+    "subject": "[repo] Review requested on PR #882: refactor auth middleware",
+    "body": "@you were requested to review pull request #882 by @devon. Refactors JWT validation and session refresh. Target branch: main. Please review before Friday's release cut.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

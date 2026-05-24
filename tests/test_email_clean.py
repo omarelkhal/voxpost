@@ -39,7 +39,7 @@ def test_clean_forwarded_email_keeps_message():
 
 
 def test_clean_forwarded_fr_phone_strips_empty_subject():
-    from voxpost.speech_check_cases import FORWARDED_FR_PHONE
+    from tests.fixture_bodies import FORWARDED_FR_PHONE
 
     cleaned = clean_email_body(FORWARDED_FR_PHONE)
     assert not cleaned.lower().startswith("subject:")

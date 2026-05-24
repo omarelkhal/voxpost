@@ -1,0 +1,32 @@
+{
+  "case_id": "en_dentist_reminder",
+  "label": "English — dental appointment reminder",
+  "intent": "Reminder for cleaning Monday 4pm; call to reschedule if needed.",
+  "must_mention_any": [
+    "dental",
+    "cleaning",
+    "monday",
+    "may",
+    "26",
+    "4",
+    "patel",
+    "reschedule"
+  ],
+  "must_not_mention": [
+    "order #99281",
+    "steuer"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-dentist",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Bright Smile Dental <reminders@brightsmile.example>",
+    "subject": "Reminder: cleaning appointment Mon May 26 at 4:00 PM",
+    "body": "Hi Omar, reminder for your dental cleaning Monday May 26 at 4:00 PM with Dr. Patel. Reply or call (555) 019-8832 to reschedule.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

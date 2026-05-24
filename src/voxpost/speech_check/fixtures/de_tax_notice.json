@@ -1,0 +1,33 @@
+{
+  "case_id": "de_tax_notice",
+  "label": "German — tax assessment notice",
+  "intent": "Finanzamt sent 2025 income tax assessment; objection deadline applies.",
+  "must_mention_any": [
+    "steuer",
+    "tax",
+    "bescheid",
+    "assessment",
+    "2025",
+    "einspruch",
+    "objection",
+    "finanzamt"
+  ],
+  "must_not_mention": [
+    "click here",
+    "50% off",
+    "offshore"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "de-tax",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Finanzamt München <finanzamt@example.de>",
+    "subject": "Steuerbescheid 2025 — Einkommensteuer",
+    "body": "Sehr geehrter Herr EL KHAL, anbei erhalten Sie Ihren Einkommensteuerbescheid für 2025. Einspruchsfrist: 4 Wochen ab Zustellung. Bei Rückfragen steht Ihnen unser Bürgerbüro zur Verfügung.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "en_security_alert",
+  "label": "English — sign-in from new device",
+  "intent": "New sign-in from Berlin; reset password if not you.",
+  "must_mention_any": [
+    "sign",
+    "berlin",
+    "password",
+    "account",
+    "reset"
+  ],
+  "must_not_mention": [
+    "subscribe",
+    "unsubscribe newsletter",
+    "impossible to trace"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-security",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Security <security@service.com>",
+    "subject": "New sign-in from Berlin",
+    "body": "We noticed a sign-in to your account from Berlin, Germany at 02:14 UTC. If this wasn't you, reset your password now.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

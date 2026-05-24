@@ -1,0 +1,31 @@
+{
+  "case_id": "en_school_snow_day",
+  "label": "English — school closure alert",
+  "intent": "School closed tomorrow due to snow; classes remote on Teams.",
+  "must_mention_any": [
+    "closed",
+    "snow",
+    "weather",
+    "thursday",
+    "remote",
+    "teams",
+    "school"
+  ],
+  "must_not_mention": [
+    "rent increase",
+    "github"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-school",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Lincoln Elementary <office@lincoln-edu.example>",
+    "subject": "Emergency: school closed Thursday — remote learning",
+    "body": "Due to severe weather, Lincoln Elementary will be closed Thursday. Students should join remote classes via Teams at 9:00 AM. Hot lunch program suspended.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

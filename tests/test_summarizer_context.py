@@ -3,7 +3,7 @@
 import json
 
 from voxpost.events import NewMailEvent
-from voxpost.speech_check_cases import FORWARDED_FR_PHONE
+from tests.fixture_bodies import FORWARDED_FR_PHONE
 from voxpost.summarizer_context import (
     build_summarizer_context,
     detect_is_forward,

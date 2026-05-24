@@ -1,0 +1,36 @@
+{
+  "case_id": "en_invoice_due",
+  "label": "English — invoice payment due",
+  "intent": "Invoice #4421 due Friday; pay via portal.",
+  "must_mention_any": [
+    "invoice",
+    "4421",
+    "friday",
+    "due",
+    "pay",
+    "payment"
+  ],
+  "must_not_mention": [
+    "click here to subscribe",
+    "offshore"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-invoice",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Billing <billing@vendor.com>",
+    "subject": "Invoice #4421 due Friday",
+    "body": "Your invoice #4421 for €1,240 is due this Friday. Pay at portal.vendor.com or reply if you need a PO.",
+    "has_attachments": true,
+    "attachment_count": 1,
+    "attachments": [
+      {
+        "filename": "invoice-4421.pdf",
+        "mime_type": "application/pdf",
+        "size_bytes": 88000
+      }
+    ]
+  }
+}

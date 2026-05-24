@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         Test a **local** model not already on [MODEL_LEADERBOARD.md](https://github.com/omarelkhal/voxpost/blob/main/docs/MODEL_LEADERBOARD.md).
-        Full steps: run `voxpost summarize speech-check`, grade with [MODEL_REVIEW_PROMPT.md](https://github.com/omarelkhal/voxpost/blob/main/docs/contributing/MODEL_REVIEW_PROMPT.md), open a PR with scores + run log.
+        Full steps: `voxpost summarize speech-check --model TAG` → grade markdown with [MODEL_REVIEW_PROMPT.md](https://github.com/omarelkhal/voxpost/blob/main/docs/contributing/MODEL_REVIEW_PROMPT.md) (name judge model) → PR with auto-named run log.
 
   - type: input
     id: model
@@ -89,7 +89,9 @@ body:
           required: true
         - label: I used default speech-check (not only --auto-grade) for official counts
           required: true
-        - label: I will attach or PR docs/benchmarks/runs/MODEL.txt
+        - label: I will PR the auto-named .md run log from speech-check
+          required: true
+        - label: I named the judge chat model in the PR (e.g. Composer 2.5)
           required: true
         - label: Model is not already on the leaderboard
           required: true

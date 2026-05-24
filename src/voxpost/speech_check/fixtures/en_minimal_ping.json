@@ -1,0 +1,25 @@
+{
+  "case_id": "en_minimal_ping",
+  "label": "English — one-line ping",
+  "intent": "Sender asks if you received the doc.",
+  "must_mention_any": [
+    "doc",
+    "get",
+    "received",
+    "sam"
+  ],
+  "must_not_mention": [],
+  "max_words": 20,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-minimal",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Sam <sam@docs.co>",
+    "subject": "doc",
+    "body": "Did you get the doc?",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

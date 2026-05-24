@@ -1,5 +1,5 @@
 from voxpost.events import NewMailEvent
-from voxpost.speech_check_cases import FORWARDED_FR_PHONE
+from tests.fixture_bodies import FORWARDED_FR_PHONE
 from voxpost.speakable_fallback import (
     display_name,
     fallback_speakable_line,

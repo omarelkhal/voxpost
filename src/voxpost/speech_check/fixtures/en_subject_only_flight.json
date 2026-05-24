@@ -1,0 +1,32 @@
+{
+  "case_id": "en_subject_only_flight",
+  "label": "English — subject-only flight cancellation",
+  "intent": "United canceled flight UA882; body is empty boilerplate.",
+  "must_mention_any": [
+    "ua882",
+    "882",
+    "canceled",
+    "cancelled",
+    "flight",
+    "rebook",
+    "ord",
+    "may"
+  ],
+  "must_not_mention": [
+    "steuer",
+    "deploy"
+  ],
+  "max_words": 25,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-flight-subj",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "United Airlines <noreply@united.com>",
+    "subject": "Flight UA882 to ORD on May 22 canceled — rebook options",
+    "body": "View this message in your browser. Manage preferences.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}
