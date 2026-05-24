@@ -13,6 +13,7 @@ class SpeechCheckCase:
     label: str
     intent: str
     event: NewMailEvent
+    input_lang: str = "en"
     must_mention_any: tuple[str, ...] = ()
     must_not_mention: tuple[str, ...] = ()
     max_words: int = 40

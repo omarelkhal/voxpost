@@ -1,0 +1,73 @@
+name: Multilingual speech-check fixture
+description: Propose a new email fixture in another language for the speech-check benchmark suite
+title: "fixture: "
+labels:
+  - help wanted
+  - benchmark
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help expand the **speech-check fixture suite** with realistic email examples in languages we do not cover yet (or under-covered locales).
+
+        Fixtures live in `src/voxpost/speech_check/fixtures/` — one JSON file per case. See [SPEECH_CHECK_CONFIG.md](https://github.com/omarelkhal/voxpost/blob/main/docs/contributing/SPEECH_CHECK_CONFIG.md) and copy an existing file as a template.
+
+        **Input language** = language of the email body. **Output language** for benchmarks is chosen separately at run time (`--output-lang`); fixtures only define input.
+
+  - type: input
+    id: input_lang
+    attributes:
+      label: Email input language (ISO 639-1)
+      description: e.g. ar, zh, he, th — must match the body language
+      placeholder: ar
+    validations:
+      required: true
+
+  - type: input
+    id: scenario
+    attributes:
+      label: Scenario (short slug)
+      description: Used in case_id, e.g. `ar_invoice_dispute` → file `ar_invoice_dispute.json`
+      placeholder: ar_invoice_dispute
+    validations:
+      required: true
+
+  - type: textarea
+    id: intent
+    attributes:
+      label: What should the speakable line convey?
+      description: One sentence — urgency, sender, action needed
+      placeholder: Tax authority deadline extension; user must reply by Friday.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample_body
+    attributes:
+      label: Sample email body (or draft)
+      description: Realistic plain-text mail; no need for perfect HTML
+    validations:
+      required: true
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: How will you contribute?
+      options:
+        - I will open a PR with the JSON fixture
+        - I can only provide the text — maintainers can format the JSON
+        - I need guidance before writing the fixture
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Body is in the declared input language (not English unless en)
+          required: true
+        - label: Scenario is distinct from existing fixtures (not duplicate intent)
+          required: true
+        - label: No real personal data — synthetic or anonymized only
+          required: true

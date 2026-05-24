@@ -20,6 +20,7 @@ def _sample_result(case_id: str = "en_short_ack") -> ModelReviewResult:
         case_id=case_id,
         label="English — short acknowledgment",
         intent="Quick thanks and confirm 3pm meeting.",
+        input_lang="en",
         event=NewMailEvent(
             account_id="eval@test.local",
             message_id="m1",
@@ -46,8 +47,13 @@ def test_benchmark_report_filename_includes_run_id():
         total=24,
         status="complete",
         run_id="20260524-143052-a1b2c3",
+        input_lang="multi",
+        output_lang="en",
     )
-    assert name == "qwen3.5-2b__ollama__24of24__complete__run-20260524-143052-a1b2c3.md"
+    assert (
+        name
+        == "qwen3.5-2b__ollama__in-multi__out-en__24of24__complete__run-20260524-143052-a1b2c3.md"
+    )
 
 
 def test_allocate_benchmark_report_path_skips_existing(tmp_path: Path):
@@ -105,6 +111,8 @@ def test_render_benchmark_markdown_in_progress():
         run_id=run_id,
         completed=1,
         status="in progress",
+        input_lang="multi",
+        output_lang="en",
     )
     md = render_benchmark_markdown(
         model_id="qwen3.5:2b",
@@ -116,10 +124,16 @@ def test_render_benchmark_markdown_in_progress():
         completed=1,
         run_id=run_id,
         report_filename=fname,
+        input_lang="multi",
+        output_lang="en",
     )
     assert fname in md
     assert run_id in md
     assert "qwen3.5:2b" in md
+    assert "Input language" in md
+    assert "`multi`" in md
+    assert "Output language" in md
+    assert "`en`" in md
     assert "in progress" in md
     assert "(1/24)" in md
     assert "`en_short_ack`" in md

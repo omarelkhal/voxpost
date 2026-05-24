@@ -265,6 +265,30 @@ def summarize_test(
     help="Comma-separated case ids (default: all fixtures)",
 )
 @click.option(
+    "--input-lang",
+    "input_lang",
+    default=None,
+    help=(
+        "Email/fixture input language filter (ISO 639-1). "
+        "Use 'all' or omit for the full multilingual suite. "
+        "Examples: en, fr, de."
+    ),
+)
+@click.option(
+    "--output-lang",
+    "output_lang",
+    default=None,
+    help=(
+        "Speakable-line / TTS output language (Supertonic code). "
+        "Default: from voxpost.toml [speech] or [tts]."
+    ),
+)
+@click.option(
+    "--list-languages",
+    is_flag=True,
+    help="List fixture input languages and allowed TTS output codes, then exit",
+)
+@click.option(
     "--no-report",
     is_flag=True,
     help="Skip auto markdown report (terminal output only)",
@@ -288,12 +312,16 @@ def summarize_speech_check(
     compare_formats: bool,
     workers: int,
     cases: str | None,
+    input_lang: str | None,
+    output_lang: str | None,
+    list_languages: bool,
     no_report: bool,
     report: bool,
     report_file: Path | None,
 ) -> None:
     """Run sample emails through the summarizer for speakable-line review."""
     from voxpost.config import _default_config_dir
+    from voxpost.speech_check_cases import list_fixture_input_langs
     from voxpost.speech_check_parallel import estimated_worker_ram_mb, recommended_workers, resolve_workers
     from voxpost.speech_check_runner import (
         _parse_case_ids,
@@ -306,12 +334,42 @@ def summarize_speech_check(
         run_speech_check,
     )
     from voxpost.speech_check_runner import filter_speech_cases
+    from voxpost.speech_langs import (
+        SUPERTONIC_OUTPUT_LANGS_SORTED,
+        describe_input_langs,
+        validate_output_lang,
+    )
     from voxpost.summarize import resolved_model_id, resolved_summarize_backend
+    from voxpost.user_config import resolved_speakable_lang
+
+    if list_languages:
+        fixture_langs = ", ".join(list_fixture_input_langs())
+        output_langs = ", ".join(SUPERTONIC_OUTPUT_LANGS_SORTED)
+        click.echo("Fixture input languages (email language): " + fixture_langs)
+        click.echo("Allowed output languages (Supertonic TTS): " + output_langs)
+        return
 
     config_dir = _default_config_dir()
     model_id = model or resolved_model_id(config_dir)
     case_ids = _parse_case_ids(cases)
-    case_count = len(filter_speech_cases(case_ids))
+    normalized_input = (
+        None if not input_lang or input_lang.strip().lower() in ("all", "*") else input_lang
+    )
+    try:
+        selected_cases = filter_speech_cases(case_ids, input_lang=normalized_input)
+    except ValueError as err:
+        raise click.UsageError(str(err)) from err
+    case_count = len(selected_cases)
+    input_lang_label = describe_input_langs(selected_cases)
+    speakable_lang: str | None = None
+    if output_lang:
+        try:
+            speakable_lang = validate_output_lang(output_lang)
+        except ValueError as err:
+            raise click.UsageError(str(err)) from err
+    else:
+        speakable_lang = resolved_speakable_lang(config_dir)
+    output_lang_label = speakable_lang
     use_report = (not no_report or report or report_file is not None) and not (
         auto_grade or compare_formats
     )
@@ -322,6 +380,12 @@ def summarize_speech_check(
     if use_report and workers != 1:
         click.echo("Note: markdown report runs one case at a time; ignoring --workers.", err=True)
     effective_workers = 1 if use_report else resolve_workers(workers, case_count=case_count)
+    if use_report or input_lang or output_lang:
+        click.echo(
+            f"Languages: input={input_lang_label}, output={output_lang_label} "
+            f"({case_count} case(s)).",
+            err=True,
+        )
     if effective_workers > 1:
         click.echo(
             f"Using {effective_workers} workers "
@@ -342,6 +406,8 @@ def summarize_speech_check(
                 local_files_only=offline,
                 model=model,
                 case_ids=case_ids,
+                input_lang=normalized_input,
+                speakable_lang=speakable_lang,
                 workers=effective_workers,
             )
             click.echo(format_comparison_report(rows, model_id=model_id))
@@ -351,6 +417,8 @@ def summarize_speech_check(
                 local_files_only=offline,
                 model=model,
                 case_ids=case_ids,
+                input_lang=normalized_input,
+                speakable_lang=speakable_lang,
                 workers=effective_workers,
             )
             click.echo(format_check_report(results, model_id=model_id))
@@ -372,6 +440,8 @@ def summarize_speech_check(
                     backend=backend,
                     total=case_count,
                     run_id=run_id,
+                    input_lang=input_lang_label,
+                    output_lang=output_lang_label,
                 )
             )
             report_writer = IncrementalBenchmarkReport(
@@ -380,6 +450,8 @@ def summarize_speech_check(
                 backend=backend,
                 total=case_count,
                 run_id=run_id,
+                input_lang=input_lang_label,
+                output_lang=output_lang_label,
             )
             click.echo(
                 f"Incremental report → {report_writer.path} ({case_count} cases, one at a time). "
@@ -400,6 +472,8 @@ def summarize_speech_check(
                     local_files_only=offline,
                     model=model,
                     case_ids=case_ids,
+                    input_lang=normalized_input,
+                    speakable_lang=speakable_lang,
                     on_case_complete=_on_case,
                 )
             except KeyboardInterrupt:
@@ -418,6 +492,8 @@ def summarize_speech_check(
                 local_files_only=offline,
                 model=model,
                 case_ids=case_ids,
+                input_lang=normalized_input,
+                speakable_lang=speakable_lang,
                 workers=effective_workers,
             )
             click.echo(format_manual_review_report(results, model_id=model_id))

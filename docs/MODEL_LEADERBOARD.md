@@ -10,9 +10,13 @@ This page tracks models ranked on the **24-case speech-check fixture suite** ([`
 
 Sorted by **PASS count** (desc), then **WEAK**, then **FAIL**. Ties keep submission order.
 
-| Rank | Model | Backend | Quant / notes | Hardware | PASS | WEAK | FAIL | Good for average PC? | Contributor | Date | Run log |
-|------|-------|---------|---------------|----------|------|------|------|----------------------|-------------|------|---------|
-| 1 | `qwen3.5:2b` | ollama | default pull | Linux x86_64, CPU (~20 cores) | 16 | 5 | 4 | Marginal | [omarelkhal](https://github.com/omarelkhal) | 2026-05-24 | [graded run](benchmarks/runs/qwen3.5-2b__ollama__24of24__complete__run-20260524-030239-ba3c98.md) (judge: Composer 2.5) |
+| Rank | Model | Backend | Input lang | Output lang | Quant / notes | Hardware | PASS | WEAK | FAIL | Good for average PC? | Contributor | Date | Run log |
+|------|-------|---------|------------|-------------|---------------|----------|------|------|------|----------------------|-------------|------|---------|
+| 1 | `qwen3.5:2b` | ollama | multi | en | default pull | Linux x86_64, CPU (~20 cores) | 16 | 5 | 4 | Marginal | [omarelkhal](https://github.com/omarelkhal) | 2026-05-24 | [graded run](benchmarks/runs/qwen3.5-2b__ollama__24of24__complete__run-20260524-030239-ba3c98.md) (judge: Composer 2.5) |
+
+**Input lang** = email/fixture filter (`multi` = full 24-case multilingual suite; `en` = English fixtures only, etc.). **Output lang** = speakable-line / TTS language (Supertonic code). Compare scores only when both match.
+
+See [Speech-check language configuration](contributing/SPEECH_CHECK_CONFIG.md) for flags and allowed codes.
 
 **Average PC** = roughly **16 GB RAM**, **4–8 CPU cores**, optional **8 GB GPU** — say **Yes** / **Marginal** / **No** in your PR.
 
@@ -81,10 +85,17 @@ Useful floor scores; expect many FAILs — that data helps users avoid bad defau
 
 ```bash
 ollama pull TAG_FROM_TABLE
-voxpost summarize speech-check --model TAG_FROM_TABLE
+
+# Full multilingual suite → English speakable output (leaderboard default)
+voxpost summarize speech-check --model TAG_FROM_TABLE --output-lang en
+
+# English fixtures only, French speakable output
+voxpost summarize speech-check --model TAG_FROM_TABLE --input-lang en --output-lang fr
 ```
 
 Tag names are **case-sensitive** and must match `ollama list` exactly (e.g. `qwen3.5:4b`, not `Qwen3.5-4B`).
+
+List fixture input languages and allowed TTS output codes: `voxpost summarize speech-check --list-languages`.
 
 ---
 
@@ -101,8 +112,10 @@ Use the table above or any other **local** tag not listed yet. See [Suggested mo
 ollama pull YOUR_MODEL_TAG
 
 # ~/.config/voxpost/voxpost.toml → backend = "ollama", model = YOUR_MODEL_TAG
-voxpost summarize speech-check --model YOUR_MODEL_TAG
+voxpost summarize speech-check --model YOUR_MODEL_TAG --output-lang en
 ```
+
+Optional: `--input-lang en` (English fixtures only), `--input-lang fr`, etc. See [SPEECH_CHECK_CONFIG.md](contributing/SPEECH_CHECK_CONFIG.md).
 
 Runs **one fixture at a time** and **auto-creates** a markdown report. After each case:
 
@@ -116,19 +129,19 @@ Use `--no-report` only if you want terminal output without a log file.
 Each run gets a unique **run id** (timestamp + random suffix) so the same model can be benchmarked many times without clobbering older logs:
 
 ```text
-{model}__{backend}__{completed}of{total}__{status}__run-{YYYYMMDD-HHMMSS}-{hex}.md
+{model}__{backend}__in-{input}__out-{output}__{completed}of{total}__{status}__run-{YYYYMMDD-HHMMSS}-{hex}.md
 ```
 
-Example (complete 24/24 Ollama run):
+Example (complete 24/24 Ollama run, multilingual input, English output):
 
 ```text
-qwen3.5-2b__ollama__24of24__complete__run-20260524-143052-a1b2c3.md
+qwen3.5-2b__ollama__in-multi__out-en__24of24__complete__run-20260524-143052-a1b2c3.md
 ```
 
 Partial / stopped early:
 
 ```text
-qwen3.5-2b__ollama__12of24__stopped-early__run-20260524-143052-a1b2c3.md
+qwen3.5-2b__ollama__in-multi__out-en__12of24__stopped-early__run-20260524-143052-a1b2c3.md
 ```
 
 Override path only if needed: `--report-file path/to/custom.md` (leaderboard PRs should use the auto name).
@@ -147,8 +160,8 @@ The chat returns a **PASS / WEAK / FAIL** table and a short verdict. You remain 
 
 Include:
 
-- [ ] New row in the **Leaderboard** table above (sorted correctly)
-- [ ] Run log: auto-named `docs/benchmarks/runs/{model}__{backend}__{n}of{N}__….md` (with judge grades filled in)
+- [ ] New row in the **Leaderboard** table above (sorted correctly) with **Input lang** and **Output lang**
+- [ ] Run log: auto-named `docs/benchmarks/runs/{model}__{backend}__in-{input}__out-{output}__{n}of{N}__….md` (with judge grades filled in)
 - [ ] **Judge model** named in PR description and report metadata
 - [ ] Hardware note (RAM, CPU, GPU, OS) in the PR description
 - [ ] Confirm model is **fully local** (Ollama or HF cache on your machine)
@@ -163,11 +176,14 @@ The suite is **24 cases** today (forwards, invoices, OTP, newsletters, multiling
 
 1. Add a JSON fixture in [`src/voxpost/speech_check/fixtures/`](../src/voxpost/speech_check/fixtures/) with:
    - unique `case_id` (filename stem)
+   - `"input_lang"` — ISO 639-1 code matching the email body language
    - realistic `event` body (`from_address`, `subject`, `body`)
    - `intent` — what a good speakable line must convey
    - optional `must_mention_any` / `must_not_mention` for `--auto-grade` smoke tests
 2. Open a **separate PR** (or combine with a model run if the fixture motivated the test)
 3. Re-run affected models after merge (leaderboard may shift)
+
+See [SPEECH_CHECK_CONFIG.md](contributing/SPEECH_CHECK_CONFIG.md) and the call for contributors in [issue #4](https://github.com/omarelkhal/voxpost/issues/4).
 
 Do not tune prompts or gates to pass only your new fixture — add scenarios that reflect real mail.
 

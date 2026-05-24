@@ -1,5 +1,6 @@
 {
   "case_id": "ja_en_mixed_vendor",
+  "input_lang": "ja",
   "label": "Mixed JP/EN — vendor shipment delay",
   "intent": "Tokyo supplier says shipment delayed; new ETA June 5.",
   "must_mention_any": [

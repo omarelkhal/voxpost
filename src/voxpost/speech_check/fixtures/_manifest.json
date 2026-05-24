@@ -26,5 +26,15 @@
     "en_dentist_reminder",
     "ja_en_mixed_vendor"
   ],
-  "count": 24
+  "count": 24,
+  "input_langs": {
+    "de": 1,
+    "en": 15,
+    "es": 1,
+    "fr": 3,
+    "it": 1,
+    "ja": 1,
+    "nl": 1,
+    "pt": 1
+  }
 }
