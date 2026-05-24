@@ -16,7 +16,7 @@ hide:
 <a class="vp-btn vp-btn-primary" href="getting-started/overview/">Get started</a>
 <a class="vp-btn vp-btn-ghost" href="SETUP/">Setup</a>
 </div>
-<p class="vp-meta">Local speech · No mail archive · Privacy-first</p>
+<p class="vp-meta">Free for everyone · No catch · Open source · Local speech · Privacy-first · <a href="https://buymeacoffee.com/elkhalomar">Buy me a coffee</a> (optional)</p>
 </div>
 <div class="vp-hero-visual">
 <figure class="vp-frame">

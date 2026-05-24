@@ -9,6 +9,16 @@
 Voxpost is a **local, on-device** desktop companion: when something important lands in **Gmail**, you get a **short spoken line** (who, and what it’s about), not a wall of text read aloud and not a cloud text-to-speech API.
 
 <p align="center">
+  <strong>Free for everyone — open source, no catch.</strong><br>
+  This is my way of giving back to the community, the same spirit as <a href="https://github.com/omarelkhal/aftertone">Aftertone</a>.<br>
+  If it helps you, you can optionally <a href="https://buymeacoffee.com/elkhalomar">buy me a coffee</a> — never required.
+</p>
+
+<p align="center">
+  <a href="https://buymeacoffee.com/elkhalomar"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy me a coffee" width="217" height="60" /></a>
+</p>
+
+<p align="center">
   <a href="docs/assets/terminal.png">
     <img src="docs/assets/terminal.png" alt="voxpost listen --speak in the terminal: VOXPOST banner, config summary, and live pipeline status" width="720">
   </a>

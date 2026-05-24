@@ -526,3 +526,35 @@
     padding-left: 0;
   }
 }
+
+/* Buy Me a Coffee — site header (all pages) */
+.vp-bmc-header {
+  display: none;
+  flex-shrink: 0;
+  align-self: center;
+  margin-right: 0.25rem;
+  line-height: 0;
+}
+
+.vp-bmc-header img {
+  display: block;
+  width: auto;
+  height: 2rem;
+  border-radius: 4px;
+}
+
+@media screen and (min-width: 60em) {
+  .vp-bmc-header {
+    display: flex;
+  }
+}
+
+.vp-meta a {
+  color: var(--vp-link);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.vp-meta a:hover {
+  color: var(--vp-link-hover);
+}
