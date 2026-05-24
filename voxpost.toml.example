@@ -8,8 +8,8 @@
 # backend: ollama (recommended) | transformers (Hugging Face + PyTorch, advanced)
 backend = "ollama"
 
-# Ollama model tag — must match `ollama pull …`
-model = "qwen3.5:2b"
+# Ollama model tag — must match `ollama pull …` (qwen3.5:4b+ recommended for daily use)
+model = "qwen3.5:4b"
 ollama_host = "http://localhost:11434"
 
 # Hugging Face / transformers path (optional — see docs/BLOCK_3_SUMMARIZE.md):
