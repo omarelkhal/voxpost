@@ -18,11 +18,81 @@ Sorted by **PASS count** (desc), then **WEAK**, then **FAIL**. Ties keep submiss
 
 ---
 
+## Suggested models to benchmark
+
+Objective shortlist for contributors — **exact Ollama tags** verified on [ollama.com/library](https://ollama.com/library) (May 2026). Matching **Hugging Face ids** are for `[summarize] backend = "transformers"` only; leaderboard rows use the **Ollama tag** when you run via Ollama.
+
+### Eligibility
+
+| Allowed | Not allowed |
+|---------|-------------|
+| Local Ollama pull (`ollama pull …`) | Any `*:cloud` tag (e.g. `qwen3.5:cloud`, `gemma3:4b-cloud`, `gpt-oss:20b-cloud`, `ministral-3:8b-cloud`) |
+| Local HF cache + `transformers` | ChatGPT, GPT-4, or any remote inference API |
+| Open-weight **gpt-oss** via Ollama/HF | HF `prompt-check` / cloud oracle runs (dev-only; not leaderboard rows) |
+
+**ChatGPT is not a benchmark target.** For OpenAI open weights locally, use **`gpt-oss:20b`** (Ollama) or **`openai/gpt-oss-20b`** (HF) — not the commercial API.
+
+Gemma weights on HF are **gated** (accept Google’s license once per account before `transformers` download).
+
+### Priority A — daily-driver band (≤ ~4B, average PC)
+
+Best coverage per watt; matches Voxpost’s listen/summarize target hardware.
+
+| Ollama tag | HF id (`transformers`) | ~Pull | Why test | Leaderboard |
+|------------|------------------------|-------|----------|-------------|
+| `qwen3.5:0.8b` | `Qwen/Qwen3.5-0.8B` | ~1.0 GB | Maintainer CPU listen default; smallest Qwen 3.5 | — |
+| `qwen3.5:2b` | `Qwen/Qwen3.5-2B` | ~2.7 GB | Strong small chat-LM; reference run exists | **Done** (16/5/4) |
+| `qwen3.5:4b` | `Qwen/Qwen3.5-4B` | ~3.4 GB | Likely best quality in sub-5B if CPU/RAM allows | — |
+| `phi4-mini` | `microsoft/Phi-4-mini-instruct` | ~2.5 GB | Same as `phi4-mini:3.8b` on Ollama; multilingual instruct | — |
+| `gemma3:1b` | `google/gemma-3-1b-it` | ~815 MB | Tiny Google instruct; gated on HF | — |
+| `gemma3:4b` | `google/gemma-3-4b-it` | ~3.3 GB | Strong 4B instruct; gated on HF | — |
+| `smollm2:1.7b` | `HuggingFaceTB/SmolLM2-1.7B-Instruct` | ~1.8 GB | HF tiny instruct baseline; 8K context on Ollama | — |
+| `llama3.2:3b` | `meta-llama/Llama-3.2-3B-Instruct` | ~2.0 GB | Common Meta small instruct; gated on HF | — |
+
+Quant variants (separate leaderboard rows): e.g. `qwen3.5:2b-q4_K_M`, `qwen3.5:4b-q4_K_M`, `gemma3:4b-it-q4_K_M`.
+
+### Priority B — mid-size (8–12B, 16–32 GB RAM or GPU)
+
+| Ollama tag | HF id (`transformers`) | ~Pull | Why test | Leaderboard |
+|------------|------------------------|-------|----------|-------------|
+| `qwen3.5:9b` | `Qwen/Qwen3.5-9B` | ~6.6 GB | Upper bound for “enthusiast” desktop | — |
+| `mistral:7b` | `mistralai/Mistral-7B-Instruct-v0.3` | ~4.4 GB | Classic 7B instruct (`mistral:7b` = v0.3 q4_K_M on Ollama) | — |
+| `ministral-3:8b` | `mistralai/Ministral-3-8B-Instruct-2512` | ~6.0 GB | Current Mistral edge line (Dec 2025) | — |
+| `mistral-nemo:12b` | `mistralai/Mistral-Nemo-Instruct-2407` | ~7.1 GB | Same as `mistral-nemo:latest`; 12B Mistral×NVIDIA | — |
+
+### Priority C — heavy local (workstation / 24 GB+ VRAM)
+
+| Ollama tag | HF id (`transformers`) | ~Pull | Why test | Leaderboard |
+|------------|------------------------|-------|----------|-------------|
+| `gpt-oss:20b` | `openai/gpt-oss-20b` | ~14 GB | Open-weight MoE; local only — **not** ChatGPT API | — |
+| `qwen3.5:27b` | `Qwen/Qwen3.5-27B` | ~17 GB | Quality ceiling for all-local Qwen 3.5 | — |
+| `gemma3:12b` | `google/gemma-3-12b-it` | ~8.1 GB | Larger Gemma instruct; gated on HF | — |
+
+### Priority D — intentional weak baselines
+
+Useful floor scores; expect many FAILs — that data helps users avoid bad defaults.
+
+| Ollama tag | HF id (`transformers`) | ~Pull | Why test | Leaderboard |
+|------------|------------------------|-------|----------|-------------|
+| `smollm2:360m` | `HuggingFaceTB/SmolLM2-360M-Instruct` | ~726 MB | Sub-1B instruct floor | — |
+| `gemma3:270m` | `google/gemma-3-270m-it` | ~292 MB | Smallest Gemma 3 text tag on Ollama | — |
+
+### Run command (any row above)
+
+```bash
+ollama pull TAG_FROM_TABLE
+voxpost summarize speech-check --model TAG_FROM_TABLE
+```
+
+Tag names are **case-sensitive** and must match `ollama list` exactly (e.g. `qwen3.5:4b`, not `Qwen3.5-4B`).
+
+---
+
 ## How to contribute a new model
 
 ### 1. Pick a model **not already on the leaderboard**
 
-Examples: `phi4-mini`, `gemma3:4b`, `mistral:7b`, `qwen3.5:4b-q4_K_M`, `smollm2:360m` — any local tag.  
+Use the table above or any other **local** tag not listed yet. See [Suggested models to benchmark](#suggested-models-to-benchmark).  
 **Do not** submit cloud-only tags (`*:cloud`, remote APIs).
 
 ### 2. Run the 24 fixtures
