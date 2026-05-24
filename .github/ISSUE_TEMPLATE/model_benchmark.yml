@@ -1,0 +1,95 @@
+name: Model speech-check benchmark
+description: Submit a local model tested on the 24-case speech-check suite for the leaderboard
+title: "benchmark: "
+labels:
+  - benchmark
+  - help wanted
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Test a **local** model not already on [MODEL_LEADERBOARD.md](https://github.com/omarelkhal/voxpost/blob/main/docs/MODEL_LEADERBOARD.md).
+        Full steps: run `voxpost summarize speech-check`, grade with [MODEL_REVIEW_PROMPT.md](https://github.com/omarelkhal/voxpost/blob/main/docs/contributing/MODEL_REVIEW_PROMPT.md), open a PR with scores + run log.
+
+  - type: input
+    id: model
+    attributes:
+      label: Model tag or HF id
+      description: Exact Ollama tag (e.g. phi4-mini, qwen3.5:4b-q4_K_M) or transformers id
+      placeholder: qwen3.5:4b
+    validations:
+      required: true
+
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      options:
+        - ollama
+        - transformers
+    validations:
+      required: true
+
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Hardware
+      description: RAM, CPU, GPU if any, OS
+      placeholder: 16 GB RAM, Ryzen 5, no GPU, Ubuntu 24.04
+    validations:
+      required: true
+
+  - type: input
+    id: pass
+    attributes:
+      label: PASS count
+      description: Out of 24 cases (human or rubric-graded)
+    validations:
+      required: true
+
+  - type: input
+    id: weak
+    attributes:
+      label: WEAK count
+    validations:
+      required: true
+
+  - type: input
+    id: fail
+    attributes:
+      label: FAIL count
+    validations:
+      required: true
+
+  - type: dropdown
+    id: average_pc
+    attributes:
+      label: Good for average desktop PC?
+      options:
+        - "Yes"
+        - Marginal
+        - "No"
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Worst cases, quant tag, link to PR with run log, etc.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Model is fully local (no cloud inference API)
+          required: true
+        - label: I used default speech-check (not only --auto-grade) for official counts
+          required: true
+        - label: I will attach or PR docs/benchmarks/runs/MODEL.txt
+          required: true
+        - label: Model is not already on the leaderboard
+          required: true

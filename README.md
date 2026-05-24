@@ -114,65 +114,54 @@ mode = "fixed"
 target_lang = "en"
 ```
 
-### Recommended Ollama models (Qwen 3.5)
+### Summarizer models (any local model)
 
-Voxpost is tested with the **[Qwen 3.5](https://ollama.com/library/qwen3.5)** family on Ollama. Pick **any tag whose base size is the same** — set `[summarize].model` to the **exact name** from `ollama list` (e.g. `qwen3.5:4b-q4_K_M`, not just `qwen3.5:4b`).
+Voxpost is **not locked to Qwen**. Use any **local** model via Ollama or Hugging Face + `transformers` — **Phi**, **Gemma**, **Mistral**, **SmolLM**, **Llama**, **Qwen**, etc. Set `[summarize].model` to the exact tag from `ollama list` or a HF model id.
 
-Speakable lines must be **accurate**. Sub-4B models often **hallucinate** senders, dates, and intent on real mail.
+Maintainers mostly test with **[Qwen 3.5](https://ollama.com/library/qwen3.5)** on Ollama today; that is a **starting point**, not a requirement.
 
-#### By base size (pick one tag per row)
+**Quality rule of thumb:** sub-**4B** models often hallucinate senders and intent on real mail. The **[model leaderboard](docs/MODEL_LEADERBOARD.md)** collects **community runs** on **24 fixed email fixtures** so small vs mid-size models can be compared objectively.
 
-| Base size | Example tags | RAM / disk (typical) | Use with Voxpost |
-|-----------|----------------|----------------------|------------------|
-| **0.8B** | `qwen3.5:0.8b`, `qwen3.5:0.8b-q8_0`, `qwen3.5:0.8b-mlx` | ~1 GB | **Avoid** for daily listen — too error-prone |
-| **2B** | `qwen3.5:2b`, `qwen3.5:2b-q4_K_M`, `qwen3.5:2b-mlx` | ~2–3 GB | Smoke tests only |
-| **4B** | `qwen3.5:4b`, `qwen3.5:4b-q4_K_M`, `qwen3.5:4b-mlx` | ~3–5 GB | **Recommended minimum** for daily use |
-| **9B** | `qwen3.5:9b`, `qwen3.5:latest`†, `qwen3.5:9b-q4_K_M`, `qwen3.5:9b-mlx` | ~7–11 GB | **Recommended** if you have the RAM — stronger on long mail |
-| **27B** | `qwen3.5:27b`, `qwen3.5:27b-q4_K_M`, `qwen3.5:27b-mlx` | ~17–30 GB | High-end desktop / workstation |
-| **35B** | `qwen3.5:35b-a3b`, `qwen3.5:35b-a3b-q4_K_M` | ~20–39 GB | High-end only |
-| **122B** | `qwen3.5:122b-a10b`, `qwen3.5:122b-a10b-q4_K_M` | ~81 GB | Server-class hardware |
+| What | Where |
+|------|--------|
+| **Leaderboard** (PASS / WEAK / FAIL) | [docs/MODEL_LEADERBOARD.md](docs/MODEL_LEADERBOARD.md) |
+| **How to submit a new model** | Leaderboard doc + [chat review prompt](docs/contributing/MODEL_REVIEW_PROMPT.md) |
+| **Add a new test email** | PR to [`speech_check_cases.py`](src/voxpost/speech_check_cases.py) |
+| **GitHub issue template** | *New issue → Model speech-check benchmark* |
 
-† `qwen3.5:latest` currently tracks the **9B** build (~6.6 GB).
+**Contributor flow (short):**
 
-#### Tag suffixes (same model, different packaging)
+1. Pick a model **not** on the leaderboard → `ollama pull …`
+2. Run `voxpost summarize speech-check --model YOUR_TAG --workers 1` → save output
+3. Paste output into the **[MODEL_REVIEW_PROMPT](docs/contributing/MODEL_REVIEW_PROMPT.md)** in a chat → get PASS/WEAK/FAIL counts
+4. PR: leaderboard row + `docs/benchmarks/runs/YOUR_TAG.txt`
 
-| Pattern | Meaning | When to use |
-|---------|---------|-------------|
-| *(none)* e.g. `qwen3.5:4b` | Default Ollama bundle | Easiest — start here |
-| `-q4_K_M`, `-q8_0`, `-bf16` | Quantization / precision | `-q4_K_M` saves RAM; `-q8_0` or `-bf16` often more stable |
-| `-mlx`, `-mlx-bf16`, `-mxfp8`, `-nvfp4` | Apple **MLX** builds | **macOS Apple Silicon** — often faster than generic CPU |
-| `-int4`, `-int8` | Integer quants (large models) | 27B+ when VRAM/RAM is tight |
-| `-coding-*` | Coding-tuned 27B / 35B variants | Optional; mail briefings don’t require them |
+No Gmail, no full `listen` pipeline — just the fixture suite and your judgment (optionally chat-assisted).
 
-Gmail bodies are **text** — you do not need image input. Tags marked “Text, Image” still work; `-mlx` text-only variants are fine on Mac.
+#### Example families (not exhaustive)
 
-#### Do not use for Voxpost
+| Family | Example Ollama tags | Notes |
+|--------|---------------------|--------|
+| **Qwen 3.5** | `qwen3.5:4b`, `qwen3.5:9b`, `qwen3.5:4b-mlx` | Maintainer default; many quants |
+| **Phi** | `phi4-mini`, `phi3:mini` | Try on leaderboard |
+| **Gemma** | `gemma3:4b`, `gemma2:2b` | Try on leaderboard |
+| **Mistral** | `mistral:7b`, `ministral-3:8b` | Heavier; needs RAM |
+| **SmolLM** | `smollm2:360m`, `smollm2:1.7b` | Expect weak scores — good baseline |
 
-| Tag | Why |
-|-----|-----|
-| `qwen3.5:cloud`, `qwen3.5:397b-cloud` | Remote inference — breaks on-device / privacy goals |
-| **`0.8b` / `2b` for production** | Frequent bad summaries; OK only to verify the pipeline |
-
-#### Pull examples
+Avoid `*:cloud` tags — not local.
 
 ```bash
-# Recommended starting points (pick one)
-ollama pull qwen3.5:4b
-ollama pull qwen3.5:9b          # or: ollama pull qwen3.5:latest
-
-# Same 4B model, smaller quant (less RAM)
-ollama pull qwen3.5:4b-q4_K_M
-
-# macOS Apple Silicon
-ollama pull qwen3.5:4b-mlx
+ollama pull qwen3.5:4b    # example; use whatever you are benchmarking
 ```
 
 ```toml
-# [summarize] — must match `ollama list` exactly
-model = "qwen3.5:4b"           # or qwen3.5:9b, qwen3.5:4b-q4_K_M, qwen3.5:4b-mlx, …
+[summarize]
+backend = "ollama"
+model = "qwen3.5:4b"     # or phi4-mini, gemma3:4b, …
+ollama_host = "http://localhost:11434"
 ```
 
-Browse all tags: `ollama search qwen3.5` or [ollama.com/library/qwen3.5](https://ollama.com/library/qwen3.5). After changing `[summarize].model`, send a test email before relying on daily listen.
+Browse Ollama: [ollama.com/library](https://ollama.com/library). After changing models, run speech-check before daily `listen --speak`.
 
 ---
 
@@ -207,7 +196,7 @@ Settings live in **`~/.config/voxpost/voxpost.toml`** (or `%USERPROFILE%\.config
 | Key | Env override | Default | Meaning |
 |-----|--------------|---------|---------|
 | `backend` | `VOXPOST_SUMMARIZER_BACKEND` | `transformers`* | `ollama` (recommended) or `transformers` (Hugging Face + PyTorch) |
-| `model` | `VOXPOST_SUMMARIZER_MODEL` | (see code) | Ollama tag from the [Qwen 3.5 library](https://ollama.com/library/qwen3.5) (e.g. `qwen3.5:4b`, `qwen3.5:9b`, `qwen3.5:4b-q4_K_M`) or HF id for transformers |
+| `model` | `VOXPOST_SUMMARIZER_MODEL` | (see code) | Ollama tag (`phi4-mini`, `qwen3.5:4b`, …) or HF id for transformers — see [leaderboard](docs/MODEL_LEADERBOARD.md) |
 | `ollama_host` | `VOXPOST_OLLAMA_HOST` | `http://localhost:11434` | Ollama API base URL |
 | `device` | `VOXPOST_SUMMARIZER_DEVICE` | `auto` | **transformers only:** `auto`, `cpu`, `cuda`, `mps` |
 | `cpu_threads` | `VOXPOST_SUMMARIZER_CPU_THREADS` | `0` | **transformers CPU:** thread count (`0` = half of logical cores) |
