@@ -1,126 +1,42 @@
-# Hear what arrived — without opening another tab
-
-**Voxpost** is a local, on-device desktop companion: when mail lands in **Gmail**, you get a **short spoken line** (who, and what it’s about) — not a wall of text and not a cloud TTS API.
-
-<p align="center">
-  <img src="assets/voxpost-logo.png" alt="Voxpost" width="480">
-</p>
-
-<p align="center">
-  <img src="assets/terminal.png" alt="voxpost listen --speak" width="720">
-</p>
-
-<p align="center"><em><code>voxpost listen --speak</code> · detect → summarize → speak</em></p>
-
+---
+title: Voxpost
+hide:
+  - navigation
+  - toc
+  - footer
 ---
 
-## Why Voxpost?
-
-Many of us **watch the inbox** while coding — tabbing back to Gmail just to see if something matters breaks focus. Voxpost gives you **one actionable sentence**, **on your machine**, when you allow it.
-
-!!! tip "Privacy-first"
-    You bring your own Google Cloud project and OAuth credentials. Mail is processed **in memory** and discarded — no archive, no cloud summarizer, no subscription TTS vendor for the core path.
-
----
-
-## Building blocks
-
-| Block | What | Status |
-|-------|------|--------|
-| **1** | Gmail OAuth, watch, Pub/Sub, history events | Done |
-| **1b** | Attachment metadata (no bytes) | Done |
-| **3** | Local summarizer → one speakable line | Done (CLI) |
-| **4** | Supertonic 3 on-device TTS | Done (CLI) |
-| **5** | Desktop UI + filter rules | Planned |
-| **2** | VIP / keyword / quiet-hour rules | Deferred until UI |
-
-<div class="grid cards" markdown>
-
--   :material-email-fast:{ .lg .middle } **Gmail events**
-
-    ---
-
-    Event-driven pipeline with no mail storage.
-
-    [:octicons-arrow-right-24: Block 1](BLOCK_1_GMAIL_EVENTS.md)
-
--   :material-brain:{ .lg .middle } **Speakable line**
-
-    ---
-
-    Local chat-LM or seq2seq → intent-first briefing.
-
-    [:octicons-arrow-right-24: Block 3](BLOCK_3_SUMMARIZE.md)
-
--   :material-volume-high:{ .lg .middle } **Local TTS**
-
-    ---
-
-    Supertonic ONNX on CPU or GPU.
-
-    [:octicons-arrow-right-24: Block 4](BLOCK_4_TTS.md)
-
--   :material-trophy:{ .lg .middle } **Model leaderboard**
-
-    ---
-
-    Community benchmarks on 24 email fixtures.
-
-    [:octicons-arrow-right-24: Leaderboard](MODEL_LEADERBOARD.md)
-
+<div class="vp-home">
+<section class="vp-hero">
+<div class="vp-hero-copy">
+<p class="vp-label">Local Gmail companion</p>
+<h1 class="vp-title">No need to check your inbox.<br>You'll hear it when it arrives.</h1>
+<p class="vp-lead">Voxpost listens for new mail, speaks one short line on your machine, then discards it. Who sent it. What they need. Nothing stored.</p>
+<div class="vp-actions">
+<a class="vp-btn vp-btn-primary" href="getting-started/overview/">Get started</a>
+<a class="vp-btn vp-btn-ghost" href="SETUP/">Setup</a>
 </div>
-
----
-
-## Quick start
-
-=== "Linux / macOS"
-
-    ```bash
-    git clone https://github.com/omarelkhal/voxpost.git
-    cd voxpost
-    python3 -m venv .venv && source .venv/bin/activate
-    pip install -e ".[dev,tts]"
-
-    mkdir -p ~/.config/voxpost
-    cp voxpost.toml.example ~/.config/voxpost/voxpost.toml
-    # Add client_secret.json — see Setup guide
-
-    ollama pull qwen3.5:4b
-    voxpost connect
-    voxpost listen --speak
-    ```
-
-=== "Windows"
-
-    ```powershell
-    git clone https://github.com/omarelkhal/voxpost.git
-    cd voxpost
-    py -m venv .venv
-    .\.venv\Scripts\Activate.ps1
-    pip install -e ".[dev,tts]"
-
-    voxpost connect
-    voxpost listen --speak
-    ```
-
-Full GCP, OAuth, and Ollama steps: **[Setup guide](SETUP.md)**.
-
----
-
-## Design principles
-
-1. **Local speech** — notification content for TTS stays on the device.
-2. **Short by default** — “Alex says the staging deploy failed,” not the full body.
-3. **Silence is a feature** — filter noise; digest mode is a later UX knob.
-4. **Gmail proves the loop** — if spoken mail isn’t useful daily, more connectors won’t fix it.
-5. **Event-driven, ephemeral** — detect → process → speak → discard.
-
----
-
-## Next steps
-
-- New here? Read **[Getting started → Overview](getting-started/overview.md)**
-- Operator setup: **[Setup (GCP & OAuth)](SETUP.md)**
-- Benchmark a model: **[Model leaderboard](MODEL_LEADERBOARD.md)**
-- Roadmap: **[TODO](TODO.md)**
+<p class="vp-meta">Local speech · No mail archive · Privacy-first</p>
+</div>
+<div class="vp-hero-visual">
+<figure class="vp-frame">
+<img src="assets/terminal.png" alt="Terminal running voxpost listen --speak" loading="lazy" width="880" height="auto">
+<figcaption><code>voxpost listen --speak</code></figcaption>
+</figure>
+</div>
+</section>
+<section class="vp-strip" aria-label="Why Voxpost">
+<div class="vp-strip-item">
+<h2>Stay in flow</h2>
+<p>Keep your eyes on the work. Important mail reaches your ears — not another browser tab.</p>
+</div>
+<div class="vp-strip-item">
+<h2>One line</h2>
+<p>“Alex says staging failed” — not sixty seconds of forwarded thread noise.</p>
+</div>
+<div class="vp-strip-item">
+<h2>On your machine</h2>
+<p>Local summarizer and Supertonic TTS. Process in memory, speak, discard.</p>
+</div>
+</section>
+</div>

@@ -1,6 +1,13 @@
 # Overview
 
-Voxpost connects **Gmail push notifications** to a **local speakable-line pipeline** and **on-device TTS**. v1 is CLI-only; a desktop UI is planned (Block 5).
+**Stop checking your inbox — you'll hear it when it matters.** Voxpost connects Gmail push notifications to a local speakable-line pipeline and on-device TTS. v1 is CLI-only; a desktop UI is planned (Block 5).
+
+## Why Voxpost?
+
+Many of us **watch the inbox** while coding — tabbing back to Gmail just to see if something matters breaks focus. Voxpost gives you **one actionable sentence**, **on your machine**, when you allow it.
+
+!!! tip "Privacy-first"
+    You bring your own Google Cloud project and OAuth credentials. Mail is processed **in memory** and discarded — no archive, no cloud summarizer, no subscription TTS vendor for the core path.
 
 ## What you need
 
@@ -70,6 +77,39 @@ target_lang = "en"
 - **Windows** — config under `%USERPROFILE%\.config\voxpost\`.
 
 Details: **[Runtime](../RUNTIME.md)**, **[Setup](../SETUP.md)**, **[Block 4 TTS](../BLOCK_4_TTS.md)**.
+
+## Quick start
+
+=== "Linux / macOS"
+
+    ```bash
+    git clone https://github.com/omarelkhal/voxpost.git
+    cd voxpost
+    python3 -m venv .venv && source .venv/bin/activate
+    pip install -e ".[dev,tts]"
+
+    mkdir -p ~/.config/voxpost
+    cp voxpost.toml.example ~/.config/voxpost/voxpost.toml
+
+    ollama pull qwen3.5:4b
+    voxpost connect
+    voxpost listen --speak
+    ```
+
+=== "Windows"
+
+    ```powershell
+    git clone https://github.com/omarelkhal/voxpost.git
+    cd voxpost
+    py -m venv .venv
+    .\.venv\Scripts\Activate.ps1
+    pip install -e ".[dev,tts]"
+
+    voxpost connect
+    voxpost listen --speak
+    ```
+
+Full GCP and OAuth steps: **[Setup guide](../SETUP.md)**.
 
 ## What’s not in v1
 

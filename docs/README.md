@@ -2,7 +2,21 @@
 
 **Full site (search, dark mode):** [https://omarelkhal.github.io/voxpost/](https://omarelkhal.github.io/voxpost/)
 
-Build locally: `pip install -e ".[docs]"` then `mkdocs serve`.
+### Local preview
+
+Do **not** use system `mkdocs` (`/usr/bin/mkdocs`) — it lacks Material. Use the project venv:
+
+```bash
+cd ~/Desktop/voxpost
+uv sync --extra docs          # once: installs mkdocs-material into .venv
+uv run mkdocs serve           # http://127.0.0.1:8000
+```
+
+Equivalent: `.venv/bin/mkdocs serve`
+
+If `pip install` fails with **externally-managed-environment**, your shell is using Debian system Python (`/usr/bin/pip`), not this project's `.venv` — use `uv` above instead.
+
+Build locally:
 
 | Document | Purpose |
 |----------|---------|

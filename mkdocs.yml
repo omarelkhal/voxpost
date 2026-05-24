@@ -25,20 +25,23 @@ theme:
   language: en
   logo: assets/voxpost-logo.png
   favicon: assets/voxpost-logo.png
+  font:
+    text: DM Sans
+    code: JetBrains Mono
   icon:
     repo: fontawesome/brands/github
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: deep purple
-      accent: amber
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: deep purple
-      accent: amber
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -101,7 +104,7 @@ exclude_docs: |
 
 nav:
   - Home: index.md
-  - Get started:
+  - Docs:
       - Overview: getting-started/overview.md
       - Setup (GCP & OAuth): SETUP.md
       - Runtime: RUNTIME.md
