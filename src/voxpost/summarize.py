@@ -706,13 +706,26 @@ class EmailSummarizer:
         *,
         config_dir: Path | None = None,
         local_files_only: bool = False,
+        speakable_lang: str | None = None,
     ) -> None:
         self._config_dir = config_dir
         self._model_id = model or resolved_model_id(config_dir)
         self._local_files_only = local_files_only
+        self._speakable_lang_override = (
+            speakable_lang.strip().lower() if speakable_lang else None
+        )
         self._pipe: Any = None
         self._backend: str | None = None
         self._torch_device: str = "cpu"
+
+    @property
+    def speakable_lang(self) -> str:
+        """Spoken output language (CLI override or TOML speech/tts settings)."""
+        if self._speakable_lang_override:
+            return self._speakable_lang_override
+        from voxpost.user_config import resolved_speakable_lang
+
+        return resolved_speakable_lang(self._config_dir)
 
     @property
     def model_id(self) -> str:
@@ -851,8 +864,6 @@ class EmailSummarizer:
             pass
 
     def _summarize_chat(self, email_text: str, *, structured: bool = False, body_words: int = 0) -> str:
-        from voxpost.user_config import resolved_speakable_lang
-
         self._ensure_loaded()
         assert self._pipe is not None
         tokenizer, model = self._pipe
@@ -860,7 +871,7 @@ class EmailSummarizer:
 
         system = _chat_system_prompt(
             structured=structured,
-            lang=resolved_speakable_lang(self._config_dir),
+            lang=self.speakable_lang,
             body_words=body_words,
         )
         user_content = format_chat_user_message(email_text, structured=structured)
@@ -909,13 +920,12 @@ class EmailSummarizer:
         body_words: int = 0,
     ) -> str:
         from voxpost.ollama_client import ollama_chat
-        from voxpost.user_config import resolved_speakable_lang
 
         self._ensure_ollama()
         sum_cfg = _load_summarize_config(self._config_dir)
         system = _chat_system_prompt(
             structured=structured,
-            lang=resolved_speakable_lang(self._config_dir),
+            lang=self.speakable_lang,
             body_words=body_words,
         )
         user_content = format_chat_user_message(email_text, structured=structured)
@@ -976,13 +986,11 @@ class EmailSummarizer:
         assert self._pipe is not None
         import torch
 
-        from voxpost.user_config import resolved_speakable_lang
-
         model_input = wrap_model_input(
             model_input,
             model_id=self._model_id,
             body_words=body_words,
-            lang=resolved_speakable_lang(self._config_dir),
+            lang=self.speakable_lang,
         )
         if _uses_flan_prompt(self._model_id):
             max_tokens = _flan_max_new_tokens(body_words)
@@ -1024,11 +1032,9 @@ class EmailSummarizer:
         return re.sub(r"\s+", " ", line).strip()
 
     def summarize_event(self, event: NewMailEvent) -> SummarizedMailEvent:
-        from voxpost.user_config import resolved_speakable_lang
-
         source_body = _normalize_body(event)
         body_words = len(source_body.split())
-        speak_lang = resolved_speakable_lang(self._config_dir)
+        speak_lang = self.speakable_lang
         chat_lm = _uses_chat_mail_input(
             self._model_id,
             backend=self._summarize_backend(),

@@ -9,6 +9,7 @@ from pathlib import Path
 from voxpost.attachments import AttachmentInfo
 from voxpost.events import NewMailEvent
 from voxpost.speech_check.case import SpeechCheckCase
+from voxpost.speech_langs import infer_fixture_input_lang
 
 _FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -61,11 +62,16 @@ def _parse_event(raw: dict[str, object]) -> NewMailEvent:
 def load_fixture(path: Path) -> SpeechCheckCase:
     data = json.loads(path.read_text(encoding="utf-8"))
     case_id = str(data.get("case_id", path.stem))
+    explicit_lang = data.get("input_lang")
     return SpeechCheckCase(
         case_id=case_id,
         label=str(data["label"]),
         intent=str(data["intent"]),
         event=_parse_event(data["event"]),
+        input_lang=infer_fixture_input_lang(
+            case_id,
+            str(explicit_lang) if explicit_lang is not None else None,
+        ),
         must_mention_any=tuple(str(x) for x in data.get("must_mention_any", ())),
         must_not_mention=tuple(str(x) for x in data.get("must_not_mention", ())),
         max_words=int(data.get("max_words", 40)),

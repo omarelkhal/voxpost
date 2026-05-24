@@ -34,15 +34,22 @@ def benchmark_report_filename(
     run_id: str,
     completed: int,
     status: str,
+    input_lang: str = "multi",
+    output_lang: str = "en",
 ) -> str:
     """
-    Leaderboard run log name: model, backend, progress, status, unique run id.
+    Leaderboard run log name: model, backend, languages, progress, status, run id.
 
-    Example: ``qwen3.5-2b__ollama__24of24__complete__run-20260524-143052-a1b2c3.md``
+    Example: ``qwen3.5-2b__ollama__in-multi__out-en__24of24__complete__run-….md``
     """
     slug = slugify_model(model_id)
     status_token = status.replace(" ", "-").lower()
-    return f"{slug}__{backend}__{completed}of{total}__{status_token}__run-{run_id}.md"
+    in_token = input_lang.replace(" ", "-").lower()
+    out_token = output_lang.replace(" ", "-").lower()
+    return (
+        f"{slug}__{backend}__in-{in_token}__out-{out_token}__"
+        f"{completed}of{total}__{status_token}__run-{run_id}.md"
+    )
 
 
 def allocate_benchmark_report_path(
@@ -51,6 +58,8 @@ def allocate_benchmark_report_path(
     backend: str,
     total: int,
     run_id: str,
+    input_lang: str = "multi",
+    output_lang: str = "en",
     report_dir: Path = DEFAULT_REPORT_DIR,
 ) -> Path:
     """Pick a new report path; never reuse an existing file from another run."""
@@ -62,6 +71,8 @@ def allocate_benchmark_report_path(
         run_id=run_id,
         completed=0,
         status="in progress",
+        input_lang=input_lang,
+        output_lang=output_lang,
     )
     candidate = report_dir / name
     if not candidate.exists():
@@ -98,12 +109,16 @@ class IncrementalBenchmarkReport:
         backend: str,
         total: int,
         run_id: str,
+        input_lang: str = "multi",
+        output_lang: str = "en",
     ) -> None:
         self.path = path
         self.model_id = model_id
         self.backend = backend
         self.total = total
         self.run_id = run_id
+        self.input_lang = input_lang
+        self.output_lang = output_lang
         self.results: list[ModelReviewResult] = []
         self.started_at = datetime.now(timezone.utc)
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -134,6 +149,8 @@ class IncrementalBenchmarkReport:
                 run_id=self.run_id,
                 completed=completed,
                 status=status,
+                input_lang=self.input_lang,
+                output_lang=self.output_lang,
             )
             target = self.path.parent / final_name
             if target.exists() and target != self.path:
@@ -153,6 +170,8 @@ class IncrementalBenchmarkReport:
             completed=completed,
             run_id=self.run_id,
             report_filename=target.name,
+            input_lang=self.input_lang,
+            output_lang=self.output_lang,
         )
         target.write_text(content, encoding="utf-8")
         if rename and target != self.path and self.path.exists():
@@ -172,6 +191,8 @@ def render_benchmark_markdown(
     run_id: str,
     report_filename: str | None = None,
     judge_model: str | None = None,
+    input_lang: str = "multi",
+    output_lang: str = "en",
 ) -> str:
     """Build leaderboard PR markdown from sequential manual-review results."""
     fname = report_filename or benchmark_report_filename(
@@ -181,6 +202,8 @@ def render_benchmark_markdown(
         run_id=run_id,
         completed=completed,
         status=status,
+        input_lang=input_lang,
+        output_lang=output_lang,
     )
     lines: list[str] = [
         f"# Speech-check benchmark — `{model_id}`",
@@ -198,6 +221,8 @@ def render_benchmark_markdown(
         f"| Run id | `{run_id}` |",
         f"| Model | `{model_id}` |",
         f"| Backend | {backend} |",
+        f"| Input language | `{input_lang}` (email/fixture language filter) |",
+        f"| Output language | `{output_lang}` (speakable line / TTS language) |",
         f"| Fixture suite | {total} cases |",
         f"| Cases completed | {completed} |",
         f"| Host | {platform.system()} {platform.machine()}, {platform.processor() or 'unknown CPU'} |",
@@ -232,6 +257,7 @@ def render_benchmark_markdown(
                 "",
                 f"- **Label:** {case.label}",
                 f"- **Intent:** {case.intent}",
+                f"- **Input lang:** `{case.input_lang}`",
                 f"- **From:** {case.event.from_address}",
                 f"- **Subject:** {case.event.subject or '*(empty)*'}",
                 "",

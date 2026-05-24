@@ -29,6 +29,7 @@ def _build_worker_job(
     model: str | None,
     workers: int,
     case_count: int,
+    speakable_lang: str | None = None,
 ) -> tuple[WorkerJob, int]:
     effective = resolve_workers(workers, case_count=case_count)
     job = WorkerJob(
@@ -36,21 +37,39 @@ def _build_worker_job(
         local_files_only=local_files_only,
         model=model,
         effective_workers=effective,
+        speakable_lang=speakable_lang,
     )
     return job, effective
 
 
-def filter_speech_cases(case_ids: tuple[str, ...] | None) -> tuple[SpeechCheckCase, ...]:
-    """Subset fixtures by id; default is all speech-check cases."""
+def filter_speech_cases(
+    case_ids: tuple[str, ...] | None = None,
+    *,
+    input_lang: str | None = None,
+) -> tuple[SpeechCheckCase, ...]:
+    """Subset fixtures by id and/or email input language."""
     all_cases = speech_check_cases()
-    if not case_ids:
-        return all_cases
-    by_id = {c.case_id: c for c in all_cases}
-    missing = [cid for cid in case_ids if cid not in by_id]
-    if missing:
-        known = ", ".join(sorted(by_id))
-        raise ValueError(f"Unknown case id(s): {', '.join(missing)}. Known: {known}")
-    return tuple(by_id[cid] for cid in case_ids)
+    if case_ids:
+        by_id = {c.case_id: c for c in all_cases}
+        missing = [cid for cid in case_ids if cid not in by_id]
+        if missing:
+            known = ", ".join(sorted(by_id))
+            raise ValueError(f"Unknown case id(s): {', '.join(missing)}. Known: {known}")
+        all_cases = tuple(by_id[cid] for cid in case_ids)
+
+    if input_lang and input_lang.strip().lower() not in ("all", "*"):
+        lang = input_lang.strip().lower()
+        filtered = tuple(c for c in all_cases if c.input_lang == lang)
+        if not filtered:
+            from voxpost.speech_check_cases import list_fixture_input_langs
+
+            known_langs = ", ".join(list_fixture_input_langs())
+            raise ValueError(
+                f"No fixtures for input language {input_lang!r}. "
+                f"Available: {known_langs}"
+            )
+        return filtered
+    return all_cases
 
 
 def _parse_case_ids(raw: str | None) -> tuple[str, ...] | None:
@@ -136,8 +155,17 @@ def grade_speech_line(
 def review_case(summarizer: EmailSummarizer, case: SpeechCheckCase) -> ModelReviewResult:
     """Run one case and return raw model text only — human decides pass/fail."""
     model_raw = summarizer.summarize_event_text(case.event)
-    polished = polish_for_tts(model_raw)
+    polished = polish_for_tts(model_raw, lang=summarizer.speakable_lang)
     return ModelReviewResult(case=case, model_raw=polished)
+
+
+def _summarizer_from_job(job: WorkerJob) -> EmailSummarizer:
+    return EmailSummarizer(
+        model=job.model,
+        config_dir=config_dir_from_job(job),
+        local_files_only=job.local_files_only,
+        speakable_lang=job.speakable_lang,
+    )
 
 
 def run_model_review(
@@ -146,15 +174,18 @@ def run_model_review(
     local_files_only: bool = False,
     model: str | None = None,
     case_ids: tuple[str, ...] | None = None,
+    input_lang: str | None = None,
+    speakable_lang: str | None = None,
     workers: int = 1,
 ) -> list[ModelReviewResult]:
-    cases = filter_speech_cases(case_ids)
+    cases = filter_speech_cases(case_ids, input_lang=input_lang)
     job, effective = _build_worker_job(
         config_dir=config_dir,
         local_files_only=local_files_only,
         model=model,
         workers=workers,
         case_count=len(cases),
+        speakable_lang=speakable_lang,
     )
     return run_in_process_pool(cases, effective, _worker_model_review, job)
 
@@ -165,14 +196,17 @@ def run_model_review_sequential(
     local_files_only: bool = False,
     model: str | None = None,
     case_ids: tuple[str, ...] | None = None,
+    input_lang: str | None = None,
+    speakable_lang: str | None = None,
     on_case_complete: Callable[[int, int, ModelReviewResult], None] | None = None,
 ) -> list[ModelReviewResult]:
     """Run fixtures one at a time in-process (for incremental report + early stop)."""
-    cases = filter_speech_cases(case_ids)
+    cases = filter_speech_cases(case_ids, input_lang=input_lang)
     summarizer = EmailSummarizer(
         model=model,
         config_dir=config_dir,
         local_files_only=local_files_only,
+        speakable_lang=speakable_lang,
     )
     results: list[ModelReviewResult] = []
     total = len(cases)
@@ -189,11 +223,7 @@ def _worker_model_review(
     job: WorkerJob,
 ) -> list[ModelReviewResult]:
     apply_worker_cpu_threads(job)
-    summarizer = EmailSummarizer(
-        model=job.model,
-        config_dir=config_dir_from_job(job),
-        local_files_only=job.local_files_only,
-    )
+    summarizer = _summarizer_from_job(job)
     return [review_case(summarizer, case) for case in chunk]
 
 
@@ -277,16 +307,19 @@ def run_format_comparison(
     local_files_only: bool = False,
     model: str | None = None,
     case_ids: tuple[str, ...] | None = None,
+    input_lang: str | None = None,
+    speakable_lang: str | None = None,
     workers: int = 1,
 ) -> list[FormatComparisonRow]:
     """A/B plain vs structured JSON input on the same loaded chat model."""
-    cases = filter_speech_cases(case_ids)
+    cases = filter_speech_cases(case_ids, input_lang=input_lang)
     job, effective = _build_worker_job(
         config_dir=config_dir,
         local_files_only=local_files_only,
         model=model,
         workers=workers,
         case_count=len(cases),
+        speakable_lang=speakable_lang,
     )
     return run_in_process_pool(cases, effective, _worker_format_comparison, job)
 
@@ -296,11 +329,7 @@ def _worker_format_comparison(
     job: WorkerJob,
 ) -> list[FormatComparisonRow]:
     apply_worker_cpu_threads(job)
-    summarizer = EmailSummarizer(
-        model=job.model,
-        config_dir=config_dir_from_job(job),
-        local_files_only=job.local_files_only,
-    )
+    summarizer = _summarizer_from_job(job)
     rows: list[FormatComparisonRow] = []
     for case in chunk:
         plain_raw, plain_spoken, plain_grade, plain_fb = _check_case_with_format(
@@ -404,15 +433,18 @@ def run_speech_check(
     local_files_only: bool = False,
     model: str | None = None,
     case_ids: tuple[str, ...] | None = None,
+    input_lang: str | None = None,
+    speakable_lang: str | None = None,
     workers: int = 1,
 ) -> list[SpeechCheckResult]:
-    cases = filter_speech_cases(case_ids)
+    cases = filter_speech_cases(case_ids, input_lang=input_lang)
     job, effective = _build_worker_job(
         config_dir=config_dir,
         local_files_only=local_files_only,
         model=model,
         workers=workers,
         case_count=len(cases),
+        speakable_lang=speakable_lang,
     )
     return run_in_process_pool(cases, effective, _worker_speech_check, job)
 
@@ -422,11 +454,7 @@ def _worker_speech_check(
     job: WorkerJob,
 ) -> list[SpeechCheckResult]:
     apply_worker_cpu_threads(job)
-    summarizer = EmailSummarizer(
-        model=job.model,
-        config_dir=config_dir_from_job(job),
-        local_files_only=job.local_files_only,
-    )
+    summarizer = _summarizer_from_job(job)
     return [check_case(summarizer, case) for case in chunk]
 
 

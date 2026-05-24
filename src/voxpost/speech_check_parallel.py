@@ -22,6 +22,7 @@ class WorkerJob:
     local_files_only: bool
     model: str | None
     effective_workers: int = 1
+    speakable_lang: str | None = None
 
 
 def apply_worker_cpu_threads(job: WorkerJob) -> None:
