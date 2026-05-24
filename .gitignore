@@ -1,0 +1,56 @@
+# --- Secrets & credentials (never commit) ---
+.env
+.env.*
+!.env.example
+
+# Google OAuth Desktop client (any download filename)
+client_secret.json
+client_secret_*.json
+credentials.json
+
+# Gmail OAuth token, GCP config, daemon state (normally live in ~/.config/voxpost/)
+token.json
+gcp.json
+state.json
+
+# Pub/Sub / GCP service account keys
+*-pubsub-key.json
+*-sa-key.json
+*.pem
+*.p12
+
+# User runtime config (use voxpost.toml.example as template)
+voxpost.toml
+mailcue.toml
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Local / IDE ---
+.cursor/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# --- Models & caches (download locally, not in git) ---
+.cache/
+models/
+*.onnx
+*.gguf
+
+# Legacy name (pre-voxpost rename)
+mailcue-pubsub-key.json

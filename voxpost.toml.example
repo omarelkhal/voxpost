@@ -1,0 +1,50 @@
+# Copy to ~/.config/voxpost/voxpost.toml and edit.
+# Environment variables override these values (see docs/BLOCK_3_SUMMARIZE.md and docs/BLOCK_4_TTS.md).
+
+# ---------------------------------------------------------------------------
+# Summarizer (Block 3) — local model → speakable_line
+# ---------------------------------------------------------------------------
+[summarize]
+# backend: ollama (recommended) | transformers (Hugging Face + PyTorch, advanced)
+backend = "ollama"
+
+# Ollama model tag — must match `ollama pull …`
+model = "qwen3.5:2b"
+ollama_host = "http://localhost:11434"
+
+# Hugging Face / transformers path (optional — see docs/BLOCK_3_SUMMARIZE.md):
+# backend = "transformers"
+# model = "Qwen/Qwen3.5-0.8B"
+
+# Device: auto (CUDA → MPS → CPU) | cpu | cuda | gpu | mps  (transformers only)
+device = "auto"
+
+# CPU-only tuning (ignored when device resolves to cuda/mps)
+cpu_threads = 0              # 0 = half of logical cores
+idle_unload_minutes = 10     # unload weights after idle (0 = never)
+chat_max_new_tokens = 96     # raise (e.g. 128) for longer spoken summaries
+load_dtype = "auto"          # auto | float16 | float32 | bfloat16
+chat_input_format = "plain"  # plain | structured (chat LMs only)
+
+# ---------------------------------------------------------------------------
+# Text-to-speech (Block 4) — Supertonic ONNX, on-device playback
+# ---------------------------------------------------------------------------
+[tts]
+model = "supertonic-3"       # supertonic | supertonic-2 | supertonic-3
+device = "auto"              # auto | cpu | cuda | gpu (needs onnxruntime-gpu)
+voice = "M1"                 # M1–M5, F1–F5
+lang = "en"                  # en, fr, de, … or "na" for language-agnostic
+total_steps = 8              # Denoising steps (higher = better quality, slower)
+speed = 1.05                 # Speech rate (>1 faster, <1 slower)
+playback = "auto"            # auto | sounddevice | aplay
+auto_download = true         # Download ONNX assets on first use
+chime_before_speak = true    # Short chime before each spoken line
+chime_pause_ms = 350         # Pause after chime (milliseconds)
+# chime_file = "/path/to/custom.wav"
+
+# ---------------------------------------------------------------------------
+# Speech language (Block 5 preview) — how speakable lines are phrased
+# ---------------------------------------------------------------------------
+[speech]
+mode = "fixed"               # fixed = [speech].target_lang | auto = [tts].lang (never email language)
+target_lang = "en"           # Speakable-line language when mode = "fixed"
