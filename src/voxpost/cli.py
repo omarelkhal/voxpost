@@ -264,6 +264,23 @@ def summarize_test(
     default=None,
     help="Comma-separated case ids (default: all fixtures)",
 )
+@click.option(
+    "--no-report",
+    is_flag=True,
+    help="Skip auto markdown report (terminal output only)",
+)
+@click.option(
+    "--report",
+    is_flag=True,
+    hidden=True,
+    help="Deprecated: reports are created automatically; use --no-report to disable",
+)
+@click.option(
+    "--report-file",
+    default=None,
+    type=click.Path(path_type=Path),
+    help="Override report path (default: unique file under docs/benchmarks/runs/)",
+)
 def summarize_speech_check(
     offline: bool,
     model: str | None,
@@ -271,6 +288,9 @@ def summarize_speech_check(
     compare_formats: bool,
     workers: int,
     cases: str | None,
+    no_report: bool,
+    report: bool,
+    report_file: Path | None,
 ) -> None:
     """Run sample emails through the summarizer for speakable-line review."""
     from voxpost.config import _default_config_dir
@@ -282,16 +302,26 @@ def summarize_speech_check(
         format_manual_review_report,
         run_format_comparison,
         run_model_review,
+        run_model_review_sequential,
         run_speech_check,
     )
     from voxpost.speech_check_runner import filter_speech_cases
-    from voxpost.summarize import resolved_model_id
+    from voxpost.summarize import resolved_model_id, resolved_summarize_backend
 
     config_dir = _default_config_dir()
     model_id = model or resolved_model_id(config_dir)
     case_ids = _parse_case_ids(cases)
     case_count = len(filter_speech_cases(case_ids))
-    effective_workers = resolve_workers(workers, case_count=case_count)
+    use_report = (not no_report or report or report_file is not None) and not (
+        auto_grade or compare_formats
+    )
+    if (report or report_file is not None) and (auto_grade or compare_formats):
+        raise click.UsageError(
+            "Markdown report requires default manual review (no --auto-grade or --compare-formats)"
+        )
+    if use_report and workers != 1:
+        click.echo("Note: markdown report runs one case at a time; ignoring --workers.", err=True)
+    effective_workers = 1 if use_report else resolve_workers(workers, case_count=case_count)
     if effective_workers > 1:
         click.echo(
             f"Using {effective_workers} workers "
@@ -299,7 +329,7 @@ def summarize_speech_check(
             f"~{max(1, (os.cpu_count() or 4) // effective_workers)} PyTorch threads each).",
             err=True,
         )
-    elif workers == 1 and case_count > 4:
+    elif workers == 1 and case_count > 4 and not use_report:
         hint = recommended_workers(case_count=case_count)
         click.echo(
             f"Tip: with {case_count} cases and plenty of RAM, try --workers {hint} for faster runs.",
@@ -324,6 +354,64 @@ def summarize_speech_check(
                 workers=effective_workers,
             )
             click.echo(format_check_report(results, model_id=model_id))
+        elif use_report:
+            from voxpost.speech_check_report import (
+                IncrementalBenchmarkReport,
+                allocate_benchmark_report_path,
+                new_run_id,
+            )
+
+            backend = resolved_summarize_backend(config_dir)
+            explicit_report = report_file is not None
+            run_id = new_run_id()
+            initial_path = (
+                report_file
+                if explicit_report
+                else allocate_benchmark_report_path(
+                    model_id=model_id,
+                    backend=backend,
+                    total=case_count,
+                    run_id=run_id,
+                )
+            )
+            report_writer = IncrementalBenchmarkReport(
+                path=initial_path,
+                model_id=model_id,
+                backend=backend,
+                total=case_count,
+                run_id=run_id,
+            )
+            click.echo(
+                f"Incremental report → {report_writer.path} ({case_count} cases, one at a time). "
+                "Ctrl+C keeps partial progress.",
+                err=True,
+            )
+
+            def _on_case(index: int, total: int, result) -> None:
+                report_writer.append(result)
+                click.echo(
+                    f"[{index}/{total}] {result.case.case_id} — {result.model_raw}",
+                    err=True,
+                )
+
+            try:
+                results = run_model_review_sequential(
+                    config_dir=config_dir,
+                    local_files_only=offline,
+                    model=model,
+                    case_ids=case_ids,
+                    on_case_complete=_on_case,
+                )
+            except KeyboardInterrupt:
+                report_writer.finalize(interrupted=True, rename=not explicit_report)
+                click.echo(
+                    f"\nStopped early. Partial report saved to {report_writer.path}",
+                    err=True,
+                )
+                sys.exit(130)
+            report_writer.finalize(rename=not explicit_report)
+            click.echo(format_manual_review_report(results, model_id=model_id))
+            click.echo(f"Report saved: {report_writer.path}", err=True)
         else:
             results = run_model_review(
                 config_dir=config_dir,

@@ -1,0 +1,34 @@
+{
+  "case_id": "es_delivery",
+  "label": "Spanish — package delivery window",
+  "intent": "Package arrives tomorrow 9-12; someone must be home.",
+  "must_mention_any": [
+    "paquete",
+    "package",
+    "mañana",
+    "tomorrow",
+    "9",
+    "12",
+    "casa",
+    "home",
+    "entrega",
+    "delivery"
+  ],
+  "must_not_mention": [
+    "click here",
+    "cliquez"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "es-delivery",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Logística <envios@correo.es>",
+    "subject": "Entrega mañana",
+    "body": "Hola, su paquete llegará mañana entre 9:00 y 12:00. Debe haber alguien en casa para recibirlo.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "en_angry_order",
+  "label": "English — angry ALL CAPS order complaint",
+  "intent": "Customer furious; order #99281 missing; demands callback today.",
+  "must_mention_any": [
+    "99281",
+    "order",
+    "call",
+    "charge",
+    "weeks",
+    "paid"
+  ],
+  "must_not_mention": [
+    "nice to e-meet",
+    "affiliaxe"
+  ],
+  "max_words": 25,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-angry",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Chris Morgan <chris.m@email.com>",
+    "subject": "WHERE IS MY ORDER",
+    "body": "THIS IS UNACCEPTABLE. I PAID FOR ORDER #99281 TWO WEEKS AGO AND STILL NOTHING. CALL ME TODAY OR I CHARGE BACK.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

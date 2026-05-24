@@ -1,0 +1,32 @@
+{
+  "case_id": "fr_complaint",
+  "label": "French — product complaint",
+  "intent": "Customer unhappy; wants refund within 48 hours.",
+  "must_mention_any": [
+    "remboursement",
+    "refund",
+    "mauvais",
+    "wrong",
+    "modèle",
+    "modele",
+    "model",
+    "48"
+  ],
+  "must_not_mention": [
+    "cliquez sur ce lien",
+    "avocat"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "fr-complaint",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Lucie Dupont <lucie.dupont@gmail.com>",
+    "subject": "Remboursement",
+    "body": "Bonjour, j'ai reçu le mauvais modèle. Je demande un remboursement sous 48 heures svp.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

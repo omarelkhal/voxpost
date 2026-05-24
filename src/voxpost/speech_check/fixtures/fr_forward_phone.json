@@ -1,0 +1,35 @@
+{
+  "case_id": "fr_forward_phone",
+  "label": "French forward — client asks for phone number",
+  "intent": "Customer Mustafa asks Omar for a phone number.",
+  "must_mention_any": [
+    "téléphone",
+    "telephone",
+    "numéro",
+    "numero",
+    "phone",
+    "number",
+    "client",
+    "mustafa"
+  ],
+  "must_not_mention": [
+    "avocat",
+    "ouagadougou",
+    "cliquez sur ce lien",
+    "offshore pipeline",
+    "université"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "fr-fwd-phone",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Omar EL KHAL <elkhalomar@gmail.com>",
+    "subject": "Fwd:",
+    "body": "---------- Forwarded message ---------\nFrom: Mustafa Nadir Chekroun <chekrounnadir13@gmail.com>\nDate: Thu, May 21, 2026 at 5:11 PM\nSubject:\nTo: Omar EL KHAL <elkhalomar@gmail.com>\n\n\nBonjour Omar j'espère que tu vas bien je suis un client chez vous possible\nd'avoir votre numéro de téléphone merci\n",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "suite_version": 1,
+  "case_ids": [
+    "fr_forward_phone",
+    "en_deploy_alert",
+    "en_short_ack",
+    "fr_meeting_move",
+    "en_invoice_due",
+    "en_forward_partner",
+    "es_delivery",
+    "en_security_alert",
+    "fr_complaint",
+    "en_minimal_ping",
+    "en_newsletter_noise",
+    "de_tax_notice",
+    "pt_hotel_confirm",
+    "en_ooo_autoreply",
+    "en_github_pr",
+    "en_rent_increase",
+    "it_dinner_invite",
+    "en_api_bullet_list",
+    "en_subject_only_flight",
+    "en_angry_order",
+    "nl_interview_invite",
+    "en_school_snow_day",
+    "en_dentist_reminder",
+    "ja_en_mixed_vendor"
+  ],
+  "count": 24
+}

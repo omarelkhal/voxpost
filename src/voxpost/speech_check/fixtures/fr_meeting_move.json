@@ -1,0 +1,35 @@
+{
+  "case_id": "fr_meeting_move",
+  "label": "French — meeting moved to Thursday",
+  "intent": "Meeting moved to Thursday 14h, room change.",
+  "must_mention_any": [
+    "jeudi",
+    "thursday",
+    "14",
+    "réunion",
+    "reunion",
+    "meeting",
+    "salle",
+    "room",
+    "décal",
+    "moved"
+  ],
+  "must_not_mention": [
+    "cliquez",
+    "click here",
+    "ouagadougou"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "fr-meeting",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Sophie Martin <sophie@corp.fr>",
+    "subject": "Report réunion",
+    "body": "Bonjour, la réunion est décalée à jeudi 14h. On se retrouve en salle B12 au lieu de A3. Merci.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

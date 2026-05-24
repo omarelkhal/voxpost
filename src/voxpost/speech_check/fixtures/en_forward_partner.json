@@ -1,0 +1,28 @@
+{
+  "case_id": "en_forward_partner",
+  "label": "English forward — account manager intro",
+  "intent": "Asi from affiliaXe offers help as account manager.",
+  "must_mention_any": [
+    "asi",
+    "affiliaxe",
+    "account manager",
+    "help"
+  ],
+  "must_not_mention": [
+    "partners@",
+    "confidential information"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-fwd-partner",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Omar EL KHAL <elkhalomar@gmail.com>",
+    "subject": "Fwd: Hi Omar El Khal",
+    "body": "---------- Forwarded message ---------\nDe : Asi Zaror <asi@affiliaxe.com>\nDate: jeu. 17 oct. 2019 à 14:27\nSubject: Hi Omar El Khal\nTo: <elkhalomar0@gmail.com>\n\n\nHi Omar El Khal,\nNice to e-meet you, My name is Asi and i would be your dedicated account\nmanager at affiliaXe.\nI have noticed that you sent an email to partners@affiliaxe.com - How can I\nhelp you?\nBest regards\nAsi\n",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

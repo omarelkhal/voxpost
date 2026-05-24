@@ -132,9 +132,9 @@ Maintainers mostly test with **[Qwen 3.5](https://ollama.com/library/qwen3.5)** 
 **Contributor flow (short):**
 
 1. Pick a model **not** on the leaderboard → `ollama pull …`
-2. Run `voxpost summarize speech-check --model YOUR_TAG --workers 1` → save output
-3. Paste output into the **[MODEL_REVIEW_PROMPT](docs/contributing/MODEL_REVIEW_PROMPT.md)** in a chat → get PASS/WEAK/FAIL counts
-4. PR: leaderboard row + `docs/benchmarks/runs/YOUR_TAG.txt`
+2. Run `voxpost summarize speech-check --model YOUR_TAG` → unique auto-named `.md` under `docs/benchmarks/runs/`
+3. Paste the **markdown report** into **[MODEL_REVIEW_PROMPT](docs/contributing/MODEL_REVIEW_PROMPT.md)** in a judge chat → PASS/WEAK/FAIL + name the judge model
+4. PR: leaderboard row + the graded run log (`{model}__{backend}__{n}of24__{status}__{date}.md`)
 
 No Gmail, no full `listen` pipeline — just the fixture suite and your judgment (optionally chat-assisted).
 

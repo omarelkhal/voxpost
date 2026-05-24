@@ -1,0 +1,27 @@
+{
+  "case_id": "en_short_ack",
+  "label": "English — short acknowledgment",
+  "intent": "Quick thanks and confirm 3pm meeting.",
+  "must_mention_any": [
+    "3",
+    "tomorrow",
+    "thanks",
+    "works",
+    "sync",
+    "pm"
+  ],
+  "must_not_mention": [],
+  "max_words": 25,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-short",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Jordan Lee <jordan@team.io>",
+    "subject": "Re: sync",
+    "body": "Thanks — 3pm tomorrow works for me.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "case_id": "en_deploy_alert",
+  "label": "English — staging deploy failed",
+  "intent": "Staging deploy failed; migration timed out; check logs.",
+  "must_mention_any": [
+    "deploy",
+    "migration",
+    "staging",
+    "failed",
+    "timeout",
+    "timed out"
+  ],
+  "must_not_mention": [
+    "offshore",
+    "click here",
+    "full transcript"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-deploy",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Alex Chen <alex@company.com>",
+    "subject": "Staging deploy failed",
+    "body": "Hey — the staging deploy failed around 9:45. Looks like the migration step timed out. Can you check the pipeline logs when you get a chance?",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "case_id": "en_ooo_autoreply",
+  "label": "English — out-of-office auto-reply",
+  "intent": "Sender away until June 2; contact Jane for urgent items.",
+  "must_mention_any": [
+    "out",
+    "office",
+    "june",
+    "jane",
+    "urgent",
+    "automated",
+    "away"
+  ],
+  "must_not_mention": [
+    "jane@",
+    "marcus@"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-ooo",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Marcus Webb <marcus@agency.io>",
+    "subject": "Out of office Re: contract draft",
+    "body": "I'm out of the office until Monday, June 2 with limited email access. For urgent matters contact Jane Park at jane@agency.io. This is an automated response.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

@@ -25,28 +25,51 @@ Sorted by **PASS count** (desc), then **WEAK**, then **FAIL**. Ties keep submiss
 Examples: `phi4-mini`, `gemma3:4b`, `mistral:7b`, `qwen3.5:4b-q4_K_M`, `smollm2:360m` — any local tag.  
 **Do not** submit cloud-only tags (`*:cloud`, remote APIs).
 
-### 2. Run the 24 fixtures (manual output)
+### 2. Run the 24 fixtures
 
 ```bash
-# Ollama (recommended path)
 ollama pull YOUR_MODEL_TAG
 
 # ~/.config/voxpost/voxpost.toml → backend = "ollama", model = YOUR_MODEL_TAG
-voxpost summarize speech-check --model YOUR_MODEL_TAG --workers 1 \
-  | tee docs/benchmarks/runs/YOUR_MODEL_TAG.txt
+voxpost summarize speech-check --model YOUR_MODEL_TAG
 ```
 
-Use **default mode** (no `--auto-grade`). You get, for each case: **Intent**, **Body preview**, **Model summary**, and a line for your judgment.
+Runs **one fixture at a time** and **auto-creates** a markdown report. After each case:
 
-Optional reference only (not official scoring):
+- Terminal prints `[N/24] case_id — speakable line`
+- The report file under `docs/benchmarks/runs/` is updated in place (safe to commit partial runs; **Ctrl+C** keeps what finished)
 
-```bash
-voxpost summarize speech-check --model YOUR_MODEL_TAG --auto-grade --workers 1
+Use `--no-report` only if you want terminal output without a log file.
+
+#### Required run log filename
+
+Each run gets a unique **run id** (timestamp + random suffix) so the same model can be benchmarked many times without clobbering older logs:
+
+```text
+{model}__{backend}__{completed}of{total}__{status}__run-{YYYYMMDD-HHMMSS}-{hex}.md
 ```
+
+Example (complete 24/24 Ollama run):
+
+```text
+qwen3.5-2b__ollama__24of24__complete__run-20260524-143052-a1b2c3.md
+```
+
+Partial / stopped early:
+
+```text
+qwen3.5-2b__ollama__12of24__stopped-early__run-20260524-143052-a1b2c3.md
+```
+
+Override path only if needed: `--report-file path/to/custom.md` (leaderboard PRs should use the auto name).
+
+Use **default mode** (no `--auto-grade`). The markdown report includes metadata, progress table, and per-case speakable lines.
 
 ### 3. Score with the chat review prompt
 
-Open **[contributing/MODEL_REVIEW_PROMPT.md](contributing/MODEL_REVIEW_PROMPT.md)** — copy the whole prompt into Claude, ChatGPT, or similar, then paste your `speech-check` output underneath.
+Open **[contributing/MODEL_REVIEW_PROMPT.md](contributing/MODEL_REVIEW_PROMPT.md)** — copy the whole prompt into your judge chat (Claude, ChatGPT, **Composer 2.5**, etc.), then paste the **full markdown report file** underneath.
+
+Record the **judge model name** in the report metadata and PR (e.g. *Judge model: Composer 2.5*).
 
 The chat returns a **PASS / WEAK / FAIL** table and a short verdict. You remain responsible for sanity-checking it before opening a PR.
 
@@ -55,7 +78,8 @@ The chat returns a **PASS / WEAK / FAIL** table and a short verdict. You remain 
 Include:
 
 - [ ] New row in the **Leaderboard** table above (sorted correctly)
-- [ ] Run log: `docs/benchmarks/runs/YOUR_MODEL_TAG.txt`
+- [ ] Run log: auto-named `docs/benchmarks/runs/{model}__{backend}__{n}of{N}__….md` (with judge grades filled in)
+- [ ] **Judge model** named in PR description and report metadata
 - [ ] Hardware note (RAM, CPU, GPU, OS) in the PR description
 - [ ] Confirm model is **fully local** (Ollama or HF cache on your machine)
 
@@ -85,13 +109,15 @@ Do not tune prompts or gates to pass only your new fixture — add scenarios tha
 | **Local inference only** | Matches Voxpost privacy model |
 | **No `--auto-grade` as the official score** | Heuristics are for CI smoke tests; leaderboard is human + rubric |
 | **One row per exact Ollama tag / HF id** | `qwen3.5:4b` and `qwen3.5:4b-q4_K_M` are separate entries |
-| **Attach the run log** | Others can spot-check speakable lines |
+| **Auto markdown report** | Unique filename per run; model, backend, progress, status, run id |
+| **Grade the markdown file** | Paste report into MODEL_REVIEW_PROMPT; not raw terminal output |
+| **Name the judge model** | e.g. Composer 2.5 — in metadata and PR |
 | **Small models welcome** | We **want** objective evidence when sub-4B models fail — that helps users pick wisely |
 
 ---
 
 ## Related
 
-- [MODEL_REVIEW_PROMPT.md](contributing/MODEL_REVIEW_PROMPT.md) — paste into chat with your run output
+- [MODEL_REVIEW_PROMPT.md](contributing/MODEL_REVIEW_PROMPT.md) — paste into judge chat with the markdown report
 - [BLOCK_3_SUMMARIZE.md](BLOCK_3_SUMMARIZE.md) — summarizer pipeline
 - [README.md](../README.md) — configuration reference

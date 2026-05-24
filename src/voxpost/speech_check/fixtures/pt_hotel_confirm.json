@@ -1,0 +1,32 @@
+{
+  "case_id": "pt_hotel_confirm",
+  "label": "Portuguese — hotel booking confirmation",
+  "intent": "Booking confirmed in Porto; check-in Friday; late arrival noted.",
+  "must_mention_any": [
+    "reserva",
+    "booking",
+    "confirm",
+    "junho",
+    "june",
+    "check",
+    "porto",
+    "hotel"
+  ],
+  "must_not_mention": [
+    "cliquez",
+    "unsubscribe newsletter"
+  ],
+  "max_words": 40,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "pt-hotel",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Reservas <reservas@hotelporto.pt>",
+    "subject": "Confirmação — Hotel Ribeira, 12–14 Jun",
+    "body": "Olá Omar, a sua reserva está confirmada para 12 a 14 de junho. Check-in a partir das 15h. Informámos chegada tardia (~23h). Pequeno-almoço incluído.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}

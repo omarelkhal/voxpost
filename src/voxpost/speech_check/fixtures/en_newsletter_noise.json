@@ -1,0 +1,29 @@
+{
+  "case_id": "en_newsletter_noise",
+  "label": "English — newsletter marketing (noise)",
+  "intent": "Marketing promo — ideally brief or filtered; not a full readout.",
+  "must_mention_any": [
+    "sale",
+    "50",
+    "shop",
+    "weekend",
+    "off",
+    "deals"
+  ],
+  "must_not_mention": [
+    "unsubscribe link below"
+  ],
+  "max_words": 30,
+  "event": {
+    "account_id": "eval@test.local",
+    "message_id": "en-newsletter",
+    "thread_id": "eval-thread",
+    "history_id": "1",
+    "from_address": "Deals Weekly <news@shop.example>",
+    "subject": "🔥 50% OFF everything this weekend!!!",
+    "body": "Don't miss our biggest sale! Shop now and save 50% on all items. Unsubscribe at the bottom. Click here for deals.",
+    "has_attachments": false,
+    "attachment_count": 0,
+    "attachments": []
+  }
+}
