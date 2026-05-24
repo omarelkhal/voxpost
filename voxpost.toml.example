@@ -8,7 +8,7 @@
 # backend: ollama (recommended) | transformers (Hugging Face + PyTorch, advanced)
 backend = "ollama"
 
-# Ollama model tag — must match `ollama pull …` (qwen3.5:4b+ recommended for daily use)
+# Ollama tag — exact name from `ollama list` / qwen3.5 library (4b+ recommended)
 model = "qwen3.5:4b"
 ollama_host = "http://localhost:11434"
 
