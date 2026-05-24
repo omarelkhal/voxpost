@@ -2,7 +2,7 @@
 
 Voxpost is **not limited to Qwen**. Any **local** Ollama tag or Hugging Face model that works with `[summarize] backend = "ollama"` or `transformers` can be tested. Maintainers mostly use **Qwen 3.5** today; **Phi**, **Gemma**, **Mistral**, **SmolLM**, and others are welcome.
 
-This page tracks models ranked on the **24-case speech-check fixture suite** ([`speech_check_cases.py`](../src/voxpost/speech_check_cases.py)). Scores come from **human review** (your judgment + optional chat rubric), not from `--auto-grade` alone.
+This page tracks models ranked on the **24-case speech-check fixture suite** ([`speech_check/fixtures/`](../src/voxpost/speech_check/fixtures/)). Scores come from **human review** (your judgment + optional chat rubric), not from `--auto-grade` alone.
 
 ---
 
@@ -12,7 +12,7 @@ Sorted by **PASS count** (desc), then **WEAK**, then **FAIL**. Ties keep submiss
 
 | Rank | Model | Backend | Quant / notes | Hardware | PASS | WEAK | FAIL | Good for average PC? | Contributor | Date | Run log |
 |------|-------|---------|---------------|----------|------|------|------|----------------------|-------------|------|---------|
-| — | *No submissions yet* | | | | | | | | | | |
+| 1 | `qwen3.5:2b` | ollama | default pull | Linux x86_64, CPU (~20 cores) | 16 | 5 | 4 | Marginal | [omarelkhal](https://github.com/omarelkhal) | 2026-05-24 | [graded run](benchmarks/runs/qwen3.5-2b__ollama__24of24__complete__run-20260524-030239-ba3c98.md) (judge: Composer 2.5) |
 
 **Average PC** = roughly **16 GB RAM**, **4–8 CPU cores**, optional **8 GB GPU** — say **Yes** / **Marginal** / **No** in your PR.
 
@@ -91,10 +91,11 @@ Maintainers may re-run a subset before merging.
 
 The suite is **24 cases** today (forwards, invoices, OTP, newsletters, multilingual mail, etc.). If your model fails on a **real production pattern** not covered:
 
-1. Add a `SpeechCheckCase` in [`src/voxpost/speech_check_cases.py`](../src/voxpost/speech_check_cases.py) with:
-   - unique `case_id`
-   - realistic `NewMailEvent` body
+1. Add a JSON fixture in [`src/voxpost/speech_check/fixtures/`](../src/voxpost/speech_check/fixtures/) with:
+   - unique `case_id` (filename stem)
+   - realistic `event` body (`from_address`, `subject`, `body`)
    - `intent` — what a good speakable line must convey
+   - optional `must_mention_any` / `must_not_mention` for `--auto-grade` smoke tests
 2. Open a **separate PR** (or combine with a model run if the fixture motivated the test)
 3. Re-run affected models after merge (leaderboard may shift)
 
