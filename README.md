@@ -73,29 +73,208 @@ See [docs/BLOCK_1_GMAIL_EVENTS.md](docs/BLOCK_1_GMAIL_EVENTS.md), [docs/BLOCK_3_
 You bring your own credentials — nothing is bundled:
 
 - **Your** Google Cloud project and Pub/Sub (see [docs/SETUP.md](docs/SETUP.md))
-- **Your** OAuth Desktop client JSON → `~/.config/voxpost/client_secret.json`
+- **Your** OAuth Desktop client JSON (path below)
 - **Your** Gmail account via `voxpost connect` (refresh token stays local)
+
+| Platform | Config directory |
+|----------|------------------|
+| **Linux** | `~/.config/voxpost/` |
+| **macOS** | `~/.config/voxpost/` |
+| **Windows** | `%USERPROFILE%\.config\voxpost\` (same as `~/.config/voxpost/` in Python) |
+
+Files: `client_secret.json`, `gcp.json`, `token.json`, `voxpost.toml` — see [docs/SETUP.md](docs/SETUP.md) for GCP and OAuth setup (same in the browser on every OS).
 
 ---
 
-## Quick start (full pipeline)
+## Configuration by platform
 
-See **[docs/SETUP.md](docs/SETUP.md)** for the full step-by-step guide (Google Cloud, OAuth, Ollama, TTS, `voxpost.toml`).
+**Same everywhere:** Google Cloud + OAuth (browser), **`voxpost.toml`** (Ollama + local TTS), `voxpost connect`, `voxpost listen --speak`.  
+**Differs by OS:** install commands, virtualenv activation, and audio dependencies.
+
+Full GCP/OAuth walkthrough: **[docs/SETUP.md](docs/SETUP.md)**.
+
+### Shared `voxpost.toml`
+
+Copy the example into your config dir on every platform, then edit if needed:
+
+```toml
+[summarize]
+backend = "ollama"
+model = "qwen3.5:2b"
+ollama_host = "http://localhost:11434"
+
+[tts]
+model = "supertonic-3"
+device = "auto"       # linux: cuda/cpu · macOS: often cpu · windows: cuda/cpu
+voice = "M1"
+lang = "en"
+
+[speech]
+mode = "fixed"
+target_lang = "en"
+```
+
+---
+
+### Linux
+
+**Best tested.** Debian/Ubuntu-style example; adapt package names for Fedora, Arch, etc.
+
+**Prerequisites**
 
 ```bash
+sudo apt update
+sudo apt install -y python3 python3-venv python3-pip git libportaudio2
+# gcloud: https://cloud.google.com/sdk/docs/install#linux
+# Ollama: curl -fsSL https://ollama.com/install.sh | sh
+```
+
+**Install Voxpost**
+
+```bash
+git clone https://github.com/omarelkhal/voxpost.git
+cd voxpost
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e ".[dev,tts]"
-gcloud auth login && gcloud config set project YOUR_PROJECT_ID
+```
+
+**Config paths**
+
+```bash
+mkdir -p ~/.config/voxpost
+chmod 700 ~/.config/voxpost
+# OAuth Desktop JSON from Google Cloud Console:
+cp ~/Downloads/client_secret_*.json ~/.config/voxpost/client_secret.json
+chmod 600 ~/.config/voxpost/client_secret.json
+cp voxpost.toml.example ~/.config/voxpost/voxpost.toml
+```
+
+**GCP, Ollama, TTS, run** (after [SETUP.md](docs/SETUP.md) Steps 2–10)
+
+```bash
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
 voxpost setup-gcp
 gcloud auth application-default login
-# OAuth Desktop JSON → ~/.config/voxpost/client_secret.json  (see SETUP.md)
 
 ollama pull qwen3.5:2b
-cp voxpost.toml.example ~/.config/voxpost/voxpost.toml   # set backend = "ollama"
 voxpost tts download
+voxpost tts test "Linux audio check."
 
 voxpost connect
 voxpost listen --speak
 ```
+
+**Linux TTS notes:** `[tts] playback = "auto"` uses PortAudio (`sounddevice`) or `aplay`. For NVIDIA GPU TTS, install CUDA + `onnxruntime-gpu`, then set `[tts] device = "gpu"`.
+
+---
+
+### macOS
+
+**Prerequisites** (Homebrew)
+
+```bash
+brew install python@3.11 git portaudio ollama
+brew install --cask google-cloud-sdk   # or: https://cloud.google.com/sdk/docs/install#mac
+```
+
+**Install Voxpost**
+
+```bash
+git clone https://github.com/omarelkhal/voxpost.git
+cd voxpost
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev,tts]"
+```
+
+**Config paths**
+
+```bash
+mkdir -p ~/.config/voxpost
+chmod 700 ~/.config/voxpost
+cp ~/Downloads/client_secret_*.json ~/.config/voxpost/client_secret.json
+chmod 600 ~/.config/voxpost/client_secret.json
+cp voxpost.toml.example ~/.config/voxpost/voxpost.toml
+```
+
+**GCP, Ollama, TTS, run**
+
+```bash
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+voxpost setup-gcp
+gcloud auth application-default login
+
+ollama pull qwen3.5:2b
+# Start Ollama if not running: open the Ollama app or `ollama serve`
+voxpost tts download
+voxpost tts test "macOS audio check."
+
+voxpost connect
+voxpost listen --speak
+```
+
+**macOS notes:** Summarizer runs via Ollama (Metal when Ollama uses it). Supertonic TTS is ONNX — `[tts] device = "auto"` usually picks **CPU**; that is normal. Allow microphone/speaker access if macOS prompts during `tts test`.
+
+---
+
+### Windows
+
+**Prerequisites**
+
+- [Python 3.11+](https://www.python.org/downloads/) — enable **“Add python.exe to PATH”**
+- [Git for Windows](https://git-scm.com/download/win)
+- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install#windows)
+- [Ollama for Windows](https://ollama.com/download/windows)
+
+**Install Voxpost** (PowerShell)
+
+```powershell
+git clone https://github.com/omarelkhal/voxpost.git
+cd voxpost
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev,tts]"
+```
+
+**Config paths** (PowerShell)
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.config\voxpost"
+Copy-Item "$env:USERPROFILE\Downloads\client_secret_*.json" "$env:USERPROFILE\.config\voxpost\client_secret.json"
+Copy-Item voxpost.toml.example "$env:USERPROFILE\.config\voxpost\voxpost.toml"
+```
+
+**GCP, Ollama, TTS, run** (Command Prompt or PowerShell)
+
+```powershell
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+voxpost setup-gcp
+gcloud auth application-default login
+
+ollama pull qwen3.5:2b
+voxpost tts download
+voxpost tts test "Windows audio check."
+
+voxpost connect
+voxpost listen --speak
+```
+
+**Windows notes:** Voxpost reads config from `%USERPROFILE%\.config\voxpost\`. OAuth opens your default browser; allow the localhost callback. For GPU TTS, install NVIDIA drivers + CUDA-compatible `onnxruntime-gpu` if you use `[tts] device = "gpu"`. If audio fails, try `[tts] playback = "sounddevice"` in `voxpost.toml`. **WSL2 (Ubuntu)** is an alternative — follow the **Linux** steps inside WSL if you prefer a Unix-like environment.
+
+---
+
+## Quick reference
+
+| Step | Command (any OS, venv active) |
+|------|-------------------------------|
+| Prefetch TTS | `voxpost tts download` |
+| Test audio | `voxpost tts test "Hello."` |
+| Link Gmail | `voxpost connect` |
+| Run pipeline | `voxpost listen --speak` |
 
 Runtime: **Python 3.11+** ([docs/RUNTIME.md](docs/RUNTIME.md)).
 
