@@ -6,6 +6,16 @@
 
 Voxpost is a **local, on-device** desktop companion: when something important lands in **Gmail**, you get a **short spoken line** (who, and what it’s about), not a wall of text read aloud and not a cloud text-to-speech API.
 
+<p align="center">
+  <a href="docs/assets/terminal.png">
+    <img src="docs/assets/terminal.png" alt="voxpost listen --speak in the terminal: VOXPOST banner, config summary, and live pipeline status" width="720">
+  </a>
+</p>
+
+<p align="center">
+  <sub><em><code>voxpost listen --speak</code> · detect → summarize → speak · human-readable log on stderr</em></sub>
+</p>
+
 ---
 
 ## The problem
@@ -65,10 +75,6 @@ You bring your own credentials — nothing is bundled:
 - **Your** Google Cloud project and Pub/Sub (see [docs/SETUP.md](docs/SETUP.md))
 - **Your** OAuth Desktop client JSON → `~/.config/voxpost/client_secret.json`
 - **Your** Gmail account via `voxpost connect` (refresh token stays local)
-
-No mail archive, no cloud summarization, no cloud TTS, no telemetry.
-
-> **Not [MailCue](https://github.com/Olib-AI/mailcue)** — that project is an email *testing server* (SMTP/IMAP in Docker). Voxpost is unrelated: Gmail → one spoken briefing on your machine.
 
 ---
 
