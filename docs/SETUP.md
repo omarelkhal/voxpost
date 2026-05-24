@@ -411,7 +411,7 @@ voxpost listen --speak -v
 | Pub/Sub auth | `VOXPOST_PUBSUB_CREDENTIALS` file → Application Default Credentials |
 | Summarizer / TTS / speech | env vars → `voxpost.toml` → built-in defaults |
 
-See also [.env.example](../.env.example) for optional overrides.
+See also [`.env.example`](https://github.com/omarelkhal/voxpost/blob/main/.env.example) for optional overrides.
 
 ---
 

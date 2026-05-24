@@ -1,6 +1,6 @@
 # Speech-check run logs
 
-Contributors attach model run output here when opening a [leaderboard](../MODEL_LEADERBOARD.md) PR.
+Contributors attach model run output here when opening a [leaderboard](../../MODEL_LEADERBOARD.md) PR.
 
 ## Required command
 
@@ -25,6 +25,6 @@ Examples:
 
 During the run the file **updates in place** (same path until the run finishes). Progress and status live inside the markdown.
 
-Each file includes run metadata, a progress table, and per-case speakable lines. **Grade the markdown** with [MODEL_REVIEW_PROMPT.md](../contributing/MODEL_REVIEW_PROMPT.md) and record the judge model name (e.g. Composer 2.5).
+Each file includes run metadata, a progress table, and per-case speakable lines. **Grade the markdown** with [MODEL_REVIEW_PROMPT.md](../../contributing/MODEL_REVIEW_PROMPT.md) and record the judge model name (e.g. Composer 2.5).
 
 Do not commit logs that include real email addresses from your inbox — the built-in fixtures are synthetic.

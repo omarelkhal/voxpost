@@ -2,6 +2,8 @@
   <img src="docs/assets/voxpost-logo.png" alt="Voxpost" width="640">
 </p>
 
+**📖 [Full documentation site](https://omarelkhal.github.io/voxpost/)** — search, dark mode, all guides in one place.
+
 **Hear what arrived — without opening another tab.**
 
 Voxpost is a **local, on-device** desktop companion: when something important lands in **Gmail**, you get a **short spoken line** (who, and what it’s about), not a wall of text read aloud and not a cloud text-to-speech API.

@@ -1,5 +1,9 @@
 # Voxpost documentation
 
+**Full site (search, dark mode):** [https://omarelkhal.github.io/voxpost/](https://omarelkhal.github.io/voxpost/)
+
+Build locally: `pip install -e ".[docs]"` then `mkdocs serve`.
+
 | Document | Purpose |
 |----------|---------|
 | [GMAIL_EVENTS_RESEARCH.md](./GMAIL_EVENTS_RESEARCH.md) | OSS landscape and architecture decision |

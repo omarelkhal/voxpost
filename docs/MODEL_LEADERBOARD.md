@@ -207,4 +207,4 @@ Do not tune prompts or gates to pass only your new fixture — add scenarios tha
 
 - [MODEL_REVIEW_PROMPT.md](contributing/MODEL_REVIEW_PROMPT.md) — paste into judge chat with the markdown report
 - [BLOCK_3_SUMMARIZE.md](BLOCK_3_SUMMARIZE.md) — summarizer pipeline
-- [README.md](../README.md) — configuration reference
+- [README / config reference](index.md) — configuration reference

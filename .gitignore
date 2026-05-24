@@ -45,6 +45,7 @@ htmlcov/
 .vscode/
 *.swp
 .DS_Store
+site/
 
 # --- Models & caches (download locally, not in git) ---
 .cache/

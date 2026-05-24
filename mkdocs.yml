@@ -1,0 +1,122 @@
+# MkDocs Material — https://squidfunk.github.io/mkdocs-material/
+# Local preview: uv run mkdocs serve
+# Deploy: push to main (GitHub Actions → gh-pages)
+
+site_name: Voxpost
+site_description: Local Gmail companion — one speakable line, on your machine.
+site_url: https://omarelkhal.github.io/voxpost/
+repo_url: https://github.com/omarelkhal/voxpost
+repo_name: omarelkhal/voxpost
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; Voxpost contributors — MIT License
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/omarelkhal/voxpost
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
+theme:
+  name: material
+  language: en
+  logo: assets/voxpost-logo.png
+  favicon: assets/voxpost-logo.png
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+    - announce.dismiss
+
+plugins:
+  - search:
+      separator: '[\s\-]+'
+  - tags
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+exclude_docs: |
+  /README.md
+  benchmarks/runs/qwen*
+  benchmarks/runs/*.txt
+
+nav:
+  - Home: index.md
+  - Get started:
+      - Overview: getting-started/overview.md
+      - Setup (GCP & OAuth): SETUP.md
+      - Runtime: RUNTIME.md
+  - Pipeline:
+      - Gmail events (Block 1): BLOCK_1_GMAIL_EVENTS.md
+      - Summarization (Block 3): BLOCK_3_SUMMARIZE.md
+      - Models & research: BLOCK_3_MODELS.md
+      - Local TTS (Block 4): BLOCK_4_TTS.md
+  - Community:
+      - Model leaderboard: MODEL_LEADERBOARD.md
+      - Speech-check languages: contributing/SPEECH_CHECK_CONFIG.md
+      - Model review prompt: contributing/MODEL_REVIEW_PROMPT.md
+      - Benchmark run logs: benchmarks/runs/README.md
+  - Design:
+      - Gmail events research: GMAIL_EVENTS_RESEARCH.md
+      - Prompt design: voxpost-prompt-design.md
+      - Prompt engineering brief: prompt-engineering-brief.md
+  - Roadmap: TODO.md

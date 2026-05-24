@@ -51,6 +51,9 @@ tts = [
     "soundfile>=0.12",
     "numpy>=1.26",
 ]
+docs = [
+    "mkdocs-material>=9.5",
+]
 
 [project.scripts]
 voxpost = "voxpost.cli:main"
